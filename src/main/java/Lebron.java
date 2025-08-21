@@ -1,19 +1,27 @@
+import java.util.Scanner;
+
 public class Lebron {
     public static void main(String[] args) {
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
+        String greet = "    ____________________________________________________________\n" +
+                "    Hello! I'm Lebron\n" +
+                "    What can I do for you?\n" +
+                "    ____________________________________________________________\n";
 
-        String greet = "____________________________________________________________\n" +
-                "Hello! I'm Lebron\n" +
-                "What can I do for you?\n" +
-                "____________________________________________________________\n";
+        String bye = "    Bye. Hope to see you again soon!\n" +
+                "    ____________________________________________________________";
 
-        String bye = "Bye. Hope to see you again soon!\n" +
-                "____________________________________________________________";
+        // initial greeting
+        System.out.println(greet);
 
-        System.out.println(greet + bye);
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+        while (!input.equals("bye")) {
+            System.out.println("    ____________________________________________________________\n    " +
+                    input +
+                    "\n    ____________________________________________________________");
+            input = sc.nextLine();
+        }
+
+        System.out.println("    ____________________________________________________________\n" + bye);
     }
 }
