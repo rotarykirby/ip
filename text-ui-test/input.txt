@@ -1,0 +1,11 @@
+list
+todo read book
+list
+deadline return book /by Sunday
+mark 1
+unmark 1
+event project meeting /from 2025-09-01 1600 /to 1800
+list
+just a task
+list
+bye
