@@ -4,6 +4,7 @@ public class Lebron {
 
     public final static int SIZE = 100;
 
+
     public static void handleList(Task[] taskArray) {
         System.out.println("    ____________________________________________________________\n" +
                 "    Here are the tasks in your list:");
@@ -11,8 +12,7 @@ public class Lebron {
             if (taskArray[i] == null) {
                 break;
             } else {
-                System.out.println(String.format("     %d. [%s] ", (i + 1), taskArray[i].getStatusIcon()) +
-                        taskArray[i].getDescription());
+                System.out.println(String.format("    %d.", (i + 1)) + taskArray[i].toString());
             }
         }
         System.out.println("    ____________________________________________________________");
@@ -36,13 +36,48 @@ public class Lebron {
                 "\n    ____________________________________________________________");
     }
 
+    public static void printTask(Task[] taskArray, int i) {
+        System.out.println("    ____________________________________________________________\n" +
+                "    Got it. I've added this task:\n" +
+                "      " + taskArray[i].toString() +
+                String.format("\n    Now you have %d %s in the list.", (i + 1) , i == 0 ? "task" : "tasks") +
+                "\n    ____________________________________________________________");
+    }
+
+    public static void handleTasks(Task[] taskArray, String command, Task t, int i) {
+        if (command.startsWith("deadline ")) {
+            int pos = command.indexOf("/by ");
+            String description = command.substring(9, pos);
+            String by = command.substring(pos + 4);
+            taskArray[i] = new Deadline(description, by);
+            printTask(taskArray, i);
+        } else if (command.startsWith("event ")) {
+            int pos = command.indexOf("/from ");
+            int pos2 = command.indexOf("/to ");
+            String description = command.substring(6, pos);
+            String from = command.substring(pos + 6, pos2);
+            String to = command.substring(pos2 + 4);
+            taskArray[i] = new Event(description, from, to);
+            printTask(taskArray, i);
+        } else if (command.startsWith("todo ")){
+            String description = command.substring(5);
+            taskArray[i] = new Todo(description);
+            printTask(taskArray, i);
+        } else {
+            taskArray[i] = t;
+            printTask(taskArray, i);
+        }
+    }
+
     public static void handleInputs() {
         // check for user input and terminate if user says "bye"
         Scanner sc = new Scanner(System.in);
         Task[] taskArray = new Task[SIZE];
         int i = 0;
 
-        Task t = new Task(sc.nextLine());
+        String command = sc.nextLine();
+        Task t = new Task(command);
+
         while (!t.getDescription().equals("bye")) {
             if (t.getDescription().equals("list")) {
                 handleList(taskArray);
@@ -51,13 +86,11 @@ public class Lebron {
             } else if (t.getDescription().startsWith("unmark")) {
                 unmark(t, taskArray);
             } else {
-                taskArray[i] = t;
+                handleTasks(taskArray, command, t, i);
                 ++i;
-                System.out.println("    ____________________________________________________________\n" +
-                        "    added: " + t.getDescription() +
-                        "\n    ____________________________________________________________");
             }
-            t = new Task(sc.nextLine());
+            command = sc.nextLine();
+            t = new Task(command);
         }
     }
 
