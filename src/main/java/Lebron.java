@@ -18,18 +18,26 @@ public class Lebron {
         System.out.println("    ____________________________________________________________");
     }
 
-    public static void mark(Task t, Task[] taskArray) {
+    public static void mark(Task t, Task[] taskArray) throws LebronException {
         int toMark = Integer.parseInt(t.getDescription().substring(5)) - 1;
-        taskArray[toMark].markDone();
+        try {
+            taskArray[toMark].markDone();
+        } catch (NullPointerException e) {
+            throw new LebronException("Error - less tasks total than specified.");
+        }
         System.out.println("    ____________________________________________________________\n" +
                 "    Nice! I've marked this task as done:\n" +
                 "      [X] " + taskArray[toMark].getDescription() +
                 "\n    ____________________________________________________________");
     }
 
-    public static void unmark(Task t, Task[] taskArray) {
+    public static void unmark(Task t, Task[] taskArray) throws LebronException {
         int toUnmark = Integer.parseInt(t.getDescription().substring(7)) - 1;
-        taskArray[toUnmark].unmarkDone();
+        try {
+            taskArray[toUnmark].markDone();
+        } catch (NullPointerException e) {
+            throw new LebronException("Error - less tasks total than specified.");
+        }
         System.out.println("    ____________________________________________________________\n" +
                 "    OK, I've marked this task as not done yet:\n" +
                 "      [ ] " + taskArray[toUnmark].getDescription() +
@@ -64,6 +72,7 @@ public class Lebron {
             taskArray[i] = new Todo(description);
             printTask(taskArray, i);
         } else {
+            // currently unreachable
             taskArray[i] = t;
             printTask(taskArray, i);
         }
@@ -79,16 +88,72 @@ public class Lebron {
         Task t = new Task(command);
 
         while (!t.getDescription().equals("bye")) {
-            if (t.getDescription().equals("list")) {
-                handleList(taskArray);
-            } else if (t.getDescription().startsWith("mark ")) {
-                mark(t, taskArray);
-            } else if (t.getDescription().startsWith("unmark")) {
-                unmark(t, taskArray);
-            } else {
-                handleTasks(taskArray, command, t, i);
-                ++i;
+            // all exception handling done here
+            try {
+                String desc = t.getDescription();
+
+                if (desc.equals("list")) {
+                    handleList(taskArray);
+                } else if (desc.startsWith("mark")) {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - missing index for \"mark\".");
+                    }
+                    try {
+                        Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new LebronException("Error - index must be a number.");
+                    }
+                    mark(t, taskArray);
+                } else if (desc.startsWith("unmark")) {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - missing index for \"mark\".");
+                    }
+                    try {
+                        Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new LebronException("Error - index must be a number.");
+                    }
+                    unmark(t, taskArray);
+                } else if (desc.startsWith("todo")) {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of a todo cannot be empty.");
+                    }
+                    handleTasks(taskArray, command, t, i);
+                    ++i;
+                } else if (desc.startsWith("deadline")) {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of a deadline cannot be empty.");
+                    }
+                    if (!parts[1].contains("/by")) {
+                        throw new LebronException("Error - deadline time is missing. Use: deadline <desc> /by <time>");
+                    }
+                    handleTasks(taskArray, command, t, i);
+                    ++i;
+                } else if (desc.startsWith("event")) {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of a event cannot be empty.");
+                    }
+                    String rest = parts[1];
+                    if (!rest.contains("/from") || !rest.contains("/to")) {
+                        throw new LebronException("Error - start/end time missing. Use: event <desc> /from <start> /to <end>");
+                    }
+                    handleTasks(taskArray, command, t, i);
+                    ++i;
+                } else {
+                    throw new LebronException("Error - what talking you?");
+                }
+
+            } catch (LebronException e) {
+                System.out.println("    ____________________________________________________________");
+                System.out.println("    " + e.getMessage());
+                System.out.println("    ____________________________________________________________");
             }
+
             command = sc.nextLine();
             t = new Task(command);
         }
