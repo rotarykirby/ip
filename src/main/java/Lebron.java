@@ -3,6 +3,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lebron {
+    private enum CommandType {
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE;
+
+        static CommandType parse(String raw) throws LebronException {
+            if (raw == null || raw.isBlank()) {
+                throw new LebronException("Please enter a command.");
+            }
+            String head = raw.trim().split("\\s+", 2)[0];
+            return switch (head) {
+                case "list" -> LIST;
+                case "mark" -> MARK;
+                case "unmark" -> UNMARK;
+                case "delete" -> DELETE;
+                case "todo" -> TODO;
+                case "deadline" -> DEADLINE;
+                case "event" -> EVENT;
+                case "bye" -> BYE;
+                default -> throw new LebronException("Error - Unknown Command");
+            };
+        }
+    }
+
     public static void handleList(List<Task> taskList) {
         System.out.println("    ____________________________________________________________\n" +
                 "    Here are the tasks in your list:");
@@ -100,78 +122,93 @@ public class Lebron {
         Task t = new Task(command);
 
         while (!t.getDescription().equals("bye")) {
-            // all exception handling done here
+            // exception handling done here
             try {
                 String desc = t.getDescription();
+                CommandType type = CommandType.parse(desc);
+                switch (type) {
+                    case BYE:
+                        return;
+                    case LIST: {
+                        handleList(taskList);
+                        break;
+                    }
+                    case MARK: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - missing index for \"mark\".");
+                        }
+                        try {
+                            Integer.parseInt(parts[1].trim());
+                        } catch (NumberFormatException e) {
+                            throw new LebronException("Error - task to be marked must be a number.");
+                        }
+                        mark(t, taskList);
+                        break;
+                    }
+                    case UNMARK: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - missing index for \"mark\".");
+                        }
+                        try {
+                            Integer.parseInt(parts[1].trim());
+                        } catch (NumberFormatException e) {
+                            throw new LebronException("Error - task to be unmarked must be a number.");
+                        }
+                        unmark(t, taskList);
+                        break;
+                    }
+                    case DELETE: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - task to delete not specified.");
+                        }
+                        try {
+                            Integer.parseInt(parts[1].trim());
+                        } catch (NumberFormatException e) {
+                            throw new LebronException("Error - task to be deleted must be a number.");
+                        }
+                        deleteTask(t, taskList, i);
+                        --i;
+                        break;
+                    }
+                    case TODO: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - description of a todo cannot be empty.");
+                        }
+                        handleTasks(taskList, command, t, i);
+                        ++i;
+                        break;
+                    }
+                    case DEADLINE: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - description of a deadline cannot be empty.");
+                        }
+                        if (!parts[1].contains("/by")) {
+                            throw new LebronException("Error - deadline description missing time. \nUse: deadline <desc> /by <time>");
+                        }
+                        handleTasks(taskList, command, t, i);
+                        ++i;
+                        break;
+                    }
+                    case EVENT: {
+                        String[] parts = desc.split("\\s+", 2);
+                        if (parts.length < 2 || parts[1].isBlank()) {
+                            throw new LebronException("Error - description of an event cannot be empty.");
+                        }
+                        String rest = parts[1];
+                        if (!rest.contains("/from") || !rest.contains("/to")) {
+                            throw new LebronException("Error - event description missing start/end time. \nUse: event <desc> /from <start> /to <end>");
+                        }
+                        handleTasks(taskList, command, t, i);
+                        ++i;
+                        break;
+                    }
 
-                if (desc.equals("list")) {
-                    handleList(taskList);
-                } else if (desc.startsWith("mark")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - missing index for \"mark\".");
-                    }
-                    try {
-                        Integer.parseInt(parts[1].trim());
-                    } catch (NumberFormatException e) {
-                        throw new LebronException("Error - task to be marked must be a number.");
-                    }
-                    mark(t, taskList);
-                } else if (desc.startsWith("unmark")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - missing index for \"mark\".");
-                    }
-                    try {
-                        Integer.parseInt(parts[1].trim());
-                    } catch (NumberFormatException e) {
-                        throw new LebronException("Error - task to be unmarked must be a number.");
-                    }
-                    unmark(t, taskList);
-                } else if (desc.startsWith("todo")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - description of a todo cannot be empty.");
-                    }
-                    handleTasks(taskList, command, t, i);
-                    ++i;
-                } else if (desc.startsWith("deadline")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - description of a deadline cannot be empty.");
-                    }
-                    if (!parts[1].contains("/by")) {
-                        throw new LebronException("Error - deadline description missing time. \nUse: deadline <desc> /by <time>");
-                    }
-                    handleTasks(taskList, command, t, i);
-                    ++i;
-                } else if (desc.startsWith("event")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - description of an event cannot be empty.");
-                    }
-                    String rest = parts[1];
-                    if (!rest.contains("/from") || !rest.contains("/to")) {
-                        throw new LebronException("Error - event description missing start/end time. \nUse: event <desc> /from <start> /to <end>");
-                    }
-                    handleTasks(taskList, command, t, i);
-                    ++i;
-                } else if (desc.startsWith("delete")) {
-                    String[] parts = desc.split("\\s+", 2);
-                    if (parts.length < 2 || parts[1].isBlank()) {
-                        throw new LebronException("Error - task to delete not specified.");
-                    }
-                    try {
-                        Integer.parseInt(parts[1].trim());
-                    } catch (NumberFormatException e) {
-                        throw new LebronException("Error - task to be deleted must be a number.");
-                    }
-                    deleteTask(t, taskList, i);
-                    --i;
-                } else {
-                    throw new LebronException("Error - what talking you?");
                 }
-
             } catch (LebronException e) {
                 System.out.println("    ____________________________________________________________");
                 System.out.println("    " + e.getMessage());
