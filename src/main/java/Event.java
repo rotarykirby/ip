@@ -8,8 +8,7 @@ public class Event extends Task {
     protected LocalDateTime fromDateTime;
     protected LocalDate toDate;
     protected LocalDateTime toDateTime;
-    protected boolean fromTime;
-    protected boolean toTime;
+    protected boolean time;
 
     private static final DateTimeFormatter INPUT_DATE = DateTimeFormatter.ofPattern("yyyy-M-d");
     private static final DateTimeFormatter INPUT_DATETIME = DateTimeFormatter.ofPattern("yyyy-M-d HHmm");
@@ -18,63 +17,52 @@ public class Event extends Task {
 
     public Event(String description, String from, String to) throws LebronException {
         super(description);
-        parseFrom(from);
-        parseTo(to);
+        parseFromTo(from, to);
     }
 
-    private void parseFrom(String from) throws LebronException {
+    private void parseFromTo(String from, String to) throws LebronException {
         if (from == null || from.trim().isEmpty()) {
             throw new LebronException("Cannot have empty /from. Consider using deadline if no start time.");
         }
-
-        from = from.trim();
-
-        // Parse as 'yyyy-MM-dd HHmm'
-        try {
-            this.fromDateTime = LocalDateTime.parse(from, INPUT_DATETIME);
-            this.fromTime = true;
-        } catch (DateTimeParseException e1) {
-            // Not a valid date-time format, try to parse as 'yyyy-MM-dd'
-            try {
-                this.fromDate = LocalDate.parse(from, INPUT_DATE);
-                this.fromTime = false;
-            } catch (DateTimeParseException e2) {
-                // Not a valid date format
-                System.out.println(from);
-                throw new LebronException("Enter a valid /from format:\n\n" +
-                        "    yyyy-MM-dd HHmm\n" +
-                        "    yyyy-MM-dd");
-            }
-        }
-    }
-
-    private void parseTo(String to) throws LebronException {
         if (to == null || to.trim().isEmpty()) {
             throw new LebronException("Cannot have empty /to. Event must end eventually!!");
         }
 
+        from = from.trim();
         to = to.trim();
 
         // Parse as 'yyyy-MM-dd HHmm'
         try {
+            this.fromDateTime = LocalDateTime.parse(from, INPUT_DATETIME);
             this.toDateTime = LocalDateTime.parse(to, INPUT_DATETIME);
-            this.toTime = true;
+            this.time = true;
+            if (fromDateTime.isAfter(toDateTime)) {
+                throw new LebronException("Event start time cannot be after end time");
+            }
+            return;
         } catch (DateTimeParseException e1) {
             // Not a valid date-time format, try to parse as 'yyyy-MM-dd'
             try {
+                this.fromDate = LocalDate.parse(from, INPUT_DATE);
                 this.toDate = LocalDate.parse(to, INPUT_DATE);
-                this.toTime = false;
+                this.time = false;
+                if (fromDate.isAfter(toDate)) {
+                    throw new LebronException("Event start date cannot be after end date");
+                }
+                return;
             } catch (DateTimeParseException e2) {
                 // Not a valid date format
-                throw new LebronException("Enter a valid /to format:\n\n" +
+                System.out.println(from);
+                throw new LebronException("Enter dates in a valid format:\n\n" +
                         "    yyyy-MM-dd HHmm\n" +
-                        "    yyyy-MM-dd");
+                        "    yyyy-MM-dd\n\n" +
+                        "    Note that both Start and End must have the same time format.");
             }
         }
     }
 
     public String getFrom() {
-        if (fromTime) {
+        if (time) {
             return fromDateTime.format(OUTPUT_DATETIME);
         } else {
             return fromDate.format(OUTPUT_DATE);
@@ -82,7 +70,7 @@ public class Event extends Task {
     }
 
     public String getTo() {
-        if (toTime) {
+        if (time) {
             return toDateTime.format(OUTPUT_DATETIME);
         } else {
             return toDate.format(OUTPUT_DATE);
@@ -90,7 +78,7 @@ public class Event extends Task {
     }
 
     public String getOriginalFrom() {
-        if (fromTime) {
+        if (time) {
             return fromDateTime.format(INPUT_DATETIME);
         } else {
             return fromDate.format(INPUT_DATE);
@@ -98,7 +86,7 @@ public class Event extends Task {
     }
 
     public String getOriginalTo() {
-        if (toTime) {
+        if (time) {
             return toDateTime.format(INPUT_DATETIME);
         } else {
             return toDate.format(INPUT_DATE);
