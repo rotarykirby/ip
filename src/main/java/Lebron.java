@@ -1,8 +1,14 @@
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Lebron {
+    private static final String SAVE_FILE_PATH = "./data/Lebron.txt";
+
     private enum CommandType {
         LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE;
 
@@ -23,6 +29,126 @@ public class Lebron {
                 default -> throw new LebronException("Error - Unknown Command");
             };
         }
+    }
+
+    /**
+     * Saves all the tasks into location specified by SAVE_FILE_PATH
+     *
+     * @param taskList List of tasks
+     */
+    public static void saveTasks(List<Task> taskList) {
+        Path filePath = Paths.get(SAVE_FILE_PATH);
+
+        try {
+            Files.createDirectories(filePath.getParent());
+            try (FileWriter fw = new FileWriter(SAVE_FILE_PATH)) {
+                for (Task task : taskList) {
+                    fw.write(formatToWrite(task));
+                    fw.write("\n");
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Could not save tasks to file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Changes the task into a String that can be written into a file.
+     *
+     * @param t Task specified.
+     * @return String to be written into a file.
+     */
+    private static String formatToWrite(Task t) {
+        String taskType;
+        String extra1 = "";
+        boolean isDone = t.getIsDone();
+
+        if (t instanceof Todo) {
+            taskType = "T";
+            return taskType + " | " + isDone + " | " + t.getDescription();
+        } else if (t instanceof Deadline) {
+            taskType = "D";
+            extra1 = ((Deadline) t).getBy();
+            return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1;
+        } else {
+            taskType = "E";
+            extra1 = ((Event) t).getFrom();
+            String extra2 = ((Event) t).getTo();
+            return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1 + " – " + extra2;
+        }
+    }
+
+    /**
+     * Loads the tasks from the save file.
+     * Only adds tasks to the returned list if parseTask does not return null
+     *
+     * @return List of tasks as obtained from the save file.
+     */
+    public static List<Task> loadTasks() {
+        List<Task> taskList = new ArrayList<>();
+        Path filePath = Paths.get(SAVE_FILE_PATH);
+
+        // if file does not exist, return empty list
+        if (!Files.exists(filePath)) {
+            return taskList;
+        }
+
+        try (Scanner scanner = new Scanner(filePath)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                Task t = parseTask(line);
+                if (t != null) {
+                    taskList.add(t);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Could not load tasks from file: " + e.getMessage());
+        }
+
+        return taskList;
+    }
+
+    /**
+     * Takes a line from the save file and re-creates a task based on it
+     * Will return null if the task is deemed to have invalid format
+     *
+     * @param s Line from save file
+     * @return Task that is re-created
+     */
+    private static Task parseTask(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = s.split(" \\| ");
+        // check for invalid format
+        if (parts.length < 3) {
+            return null;
+        }
+
+        Task t = null;
+        String taskType = parts[0].trim();
+        boolean isDone = parts[1].trim().equals("1");
+        String description = parts[2].trim();
+
+        t = switch (taskType) {
+            case "T" -> new Todo(description);
+            case "D" -> {
+                String by = parts[3].trim();
+                yield new Deadline(description, by);
+            }
+            case "E" -> {
+                String[] fromTo = parts[3].trim().split("–", 2);
+                yield new Event(description, fromTo[0], fromTo[1]);
+            }
+            default -> t;
+        };
+
+        if (t != null && isDone) {
+            t.markDone();
+        }
+
+        return t;
     }
 
     public static void handleList(List<Task> taskList) {
@@ -54,7 +180,7 @@ public class Lebron {
     public static void unmark(Task t, List<Task> taskList) throws LebronException {
         int toUnmark = Integer.parseInt(t.getDescription().substring(7)) - 1;
         try {
-            taskList.get(toUnmark).markDone();
+            taskList.get(toUnmark).markUndone();
         } catch (IndexOutOfBoundsException e) {
             throw new LebronException("Error - less tasks total than specified.");
         }
@@ -72,7 +198,7 @@ public class Lebron {
                 "\n    ____________________________________________________________");
     }
 
-    public static void handleTasks(List<Task> taskList, String command, Task t, int i) {
+    public static void handleTasks(List<Task> taskList, String command, Task t, int i) throws LebronException {
         if (command.startsWith("deadline ")) {
             int pos = command.indexOf("/by ");
             String description = command.substring(9, pos);
@@ -85,6 +211,9 @@ public class Lebron {
             String description = command.substring(6, pos);
             String from = command.substring(pos + 6, pos2);
             String to = command.substring(pos2 + 4);
+            if (from.contains("–") || to.contains("–")) {
+                throw new LebronException("Failed to add event. Please try again without using \"–\" as a character");
+            }
             taskList.add(new Event(description, from, to));
             printTask(taskList, i);
         } else if (command.startsWith("todo ")){
@@ -115,8 +244,8 @@ public class Lebron {
     public static void handleInputs() {
         // check for user input and terminate if user says "bye"
         Scanner sc = new Scanner(System.in);
-        List<Task> taskList = new ArrayList<>();
-        int i = 0;
+        List<Task> taskList = loadTasks();
+        int i = taskList.size();
 
         String command = sc.nextLine();
         Task t = new Task(command);
@@ -130,7 +259,7 @@ public class Lebron {
                     case BYE:
                         return;
                     case LIST: {
-                        handleList(taskList);
+                        handleList(loadTasks());
                         break;
                     }
                     case MARK: {
@@ -144,6 +273,7 @@ public class Lebron {
                             throw new LebronException("Error - task to be marked must be a number.");
                         }
                         mark(t, taskList);
+                        saveTasks(taskList);
                         break;
                     }
                     case UNMARK: {
@@ -157,6 +287,7 @@ public class Lebron {
                             throw new LebronException("Error - task to be unmarked must be a number.");
                         }
                         unmark(t, taskList);
+                        saveTasks(taskList);
                         break;
                     }
                     case DELETE: {
@@ -171,6 +302,7 @@ public class Lebron {
                         }
                         deleteTask(t, taskList, i);
                         --i;
+                        saveTasks(taskList);
                         break;
                     }
                     case TODO: {
@@ -180,6 +312,7 @@ public class Lebron {
                         }
                         handleTasks(taskList, command, t, i);
                         ++i;
+                        saveTasks(taskList);
                         break;
                     }
                     case DEADLINE: {
@@ -192,6 +325,7 @@ public class Lebron {
                         }
                         handleTasks(taskList, command, t, i);
                         ++i;
+                        saveTasks(taskList);
                         break;
                     }
                     case EVENT: {
@@ -205,6 +339,7 @@ public class Lebron {
                         }
                         handleTasks(taskList, command, t, i);
                         ++i;
+                        saveTasks(taskList);
                         break;
                     }
 
