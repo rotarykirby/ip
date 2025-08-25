@@ -32,7 +32,7 @@ public class Lebron {
     }
 
     /**
-     * Saves all the tasks into a local file specified
+     * Saves all the tasks into location specified by SAVE_FILE_PATH
      *
      * @param taskList List of tasks
      */
@@ -46,9 +46,6 @@ public class Lebron {
                     fw.write(formatToWrite(task));
                     fw.write("\n");
                 }
-            } catch (LebronException e) {
-                // can only happen when adding tasks
-                // no need to do anything
             }
         } catch (IOException e) {
             System.out.println("Could not save tasks to file: " + e.getMessage());
@@ -56,12 +53,12 @@ public class Lebron {
     }
 
     /**
-     * Changes the task into a String that can be written into a file
+     * Changes the task into a String that can be written into a file.
      *
-     * @param t Task specified
-     * @return String to be written into a file
+     * @param t Task specified.
+     * @return String to be written into a file.
      */
-    private static String formatToWrite(Task t) throws LebronException {
+    private static String formatToWrite(Task t) {
         String taskType;
         String extra1 = "";
         boolean isDone = t.getIsDone();
@@ -77,13 +74,16 @@ public class Lebron {
             taskType = "E";
             extra1 = ((Event) t).getFrom();
             String extra2 = ((Event) t).getTo();
-            if (extra1.contains("–") || extra2.contains("–")) {
-                throw new LebronException("Failed to add event. Please try again without using \"–\" as a character");
-            }
             return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1 + " – " + extra2;
         }
     }
 
+    /**
+     * Loads the tasks from the save file.
+     * Only adds tasks to the returned list if parseTask does not return null
+     *
+     * @return List of tasks as obtained from the save file.
+     */
     public static List<Task> loadTasks() {
         List<Task> taskList = new ArrayList<>();
         Path filePath = Paths.get(SAVE_FILE_PATH);
@@ -108,7 +108,13 @@ public class Lebron {
         return taskList;
     }
 
-
+    /**
+     * Takes a line from the save file and re-creates a task based on it
+     * Will return null if the task is deemed to have invalid format
+     *
+     * @param s Line from save file
+     * @return Task that is re-created
+     */
     private static Task parseTask(String s) {
         if (s == null || s.trim().isEmpty()) {
             return null;
@@ -192,7 +198,7 @@ public class Lebron {
                 "\n    ____________________________________________________________");
     }
 
-    public static void handleTasks(List<Task> taskList, String command, Task t, int i) {
+    public static void handleTasks(List<Task> taskList, String command, Task t, int i) throws LebronException {
         if (command.startsWith("deadline ")) {
             int pos = command.indexOf("/by ");
             String description = command.substring(9, pos);
@@ -205,6 +211,9 @@ public class Lebron {
             String description = command.substring(6, pos);
             String from = command.substring(pos + 6, pos2);
             String to = command.substring(pos2 + 4);
+            if (from.contains("–") || to.contains("–")) {
+                throw new LebronException("Failed to add event. Please try again without using \"–\" as a character");
+            }
             taskList.add(new Event(description, from, to));
             printTask(taskList, i);
         } else if (command.startsWith("todo ")){
