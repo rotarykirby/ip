@@ -248,6 +248,12 @@ public class Lebron {
         }
     }
 
+    /**
+     * Checks for either a deadline that is occurring on that date or an event that occurs during that date
+     *
+     * @param command User inputted string starting with "check"
+     * @param taskList Current list of tasks
+     */
     public static void handleCheck(String command, List<Task> taskList) throws LebronException {
         String[] parts = command.split("\\s+", 2);
         if (parts.length < 2 || parts[1].isBlank()) {
