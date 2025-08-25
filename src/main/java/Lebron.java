@@ -101,8 +101,8 @@ public class Lebron {
                     taskList.add(t);
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Could not load tasks from file: " + e.getMessage());
+        } catch (IOException | LebronException e) {
+            System.out.println("Could not load tasks from file:\n" + e.getMessage());
         }
 
         return taskList;
@@ -115,7 +115,7 @@ public class Lebron {
      * @param s Line from save file
      * @return Task that is re-created
      */
-    private static Task parseTask(String s) {
+    private static Task parseTask(String s) throws LebronException {
         if (s == null || s.trim().isEmpty()) {
             return null;
         }
