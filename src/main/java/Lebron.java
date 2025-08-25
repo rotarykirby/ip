@@ -2,6 +2,9 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +13,7 @@ public class Lebron {
     private static final String SAVE_FILE_PATH = "./data/Lebron.txt";
 
     private enum CommandType {
-        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE;
+        LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK;
 
         static CommandType parse(String raw) throws LebronException {
             if (raw == null || raw.isBlank()) {
@@ -26,6 +29,7 @@ public class Lebron {
                 case "deadline" -> DEADLINE;
                 case "event" -> EVENT;
                 case "bye" -> BYE;
+                case "check" -> CHECK;
                 default -> throw new LebronException("Error - Unknown Command");
             };
         }
@@ -68,12 +72,12 @@ public class Lebron {
             return taskType + " | " + isDone + " | " + t.getDescription();
         } else if (t instanceof Deadline) {
             taskType = "D";
-            extra1 = ((Deadline) t).getBy();
+            extra1 = ((Deadline) t).getOriginalBy();
             return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1;
         } else {
             taskType = "E";
-            extra1 = ((Event) t).getFrom();
-            String extra2 = ((Event) t).getTo();
+            extra1 = ((Event) t).getOriginalFrom();
+            String extra2 = ((Event) t).getOriginalTo();
             return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1 + " – " + extra2;
         }
     }
@@ -101,8 +105,10 @@ public class Lebron {
                     taskList.add(t);
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Could not load tasks from file: " + e.getMessage());
+        } catch (IOException | LebronException e) {
+            System.out.println("    ____________________________________________________________\n" +
+                    "    Error - Could not load tasks from file:\n    " + e.getMessage() +
+                    "\n    ____________________________________________________________");
         }
 
         return taskList;
@@ -115,7 +121,7 @@ public class Lebron {
      * @param s Line from save file
      * @return Task that is re-created
      */
-    private static Task parseTask(String s) {
+    private static Task parseTask(String s) throws LebronException {
         if (s == null || s.trim().isEmpty()) {
             return null;
         }
@@ -201,18 +207,19 @@ public class Lebron {
     public static void handleTasks(List<Task> taskList, String command, Task t, int i) throws LebronException {
         if (command.startsWith("deadline ")) {
             int pos = command.indexOf("/by ");
-            String description = command.substring(9, pos);
-            String by = command.substring(pos + 4);
+            String description = command.substring(9, pos).trim();
+            String by = command.substring(pos + 4).trim();
             taskList.add(new Deadline(description, by));
             printTask(taskList, i);
         } else if (command.startsWith("event ")) {
             int pos = command.indexOf("/from ");
             int pos2 = command.indexOf("/to ");
-            String description = command.substring(6, pos);
-            String from = command.substring(pos + 6, pos2);
-            String to = command.substring(pos2 + 4);
+            String description = command.substring(6, pos).trim();
+            String from = command.substring(pos + 6, pos2).trim();
+            String to = command.substring(pos2 + 4).trim();
             if (from.contains("–") || to.contains("–")) {
-                throw new LebronException("Failed to add event. Please try again without using \"–\" as a character");
+                throw new LebronException("Error - Failed to add event. " +
+                        "Please try again without using \"–\" (en dash) as a character.");
             }
             taskList.add(new Event(description, from, to));
             printTask(taskList, i);
@@ -241,6 +248,52 @@ public class Lebron {
         }
     }
 
+    /**
+     * Checks for either a deadline that is occurring on that date or an event that occurs during that date
+     *
+     * @param command User inputted string starting with "check"
+     * @param taskList Current list of tasks
+     */
+    public static void handleCheck(String command, List<Task> taskList) throws LebronException {
+        String[] parts = command.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].isBlank()) {
+            throw new LebronException("Error - date not specified. Use: check yyyy-MM-dd");
+        }
+
+        String date = parts[1].trim();
+        LocalDate targetDate;
+
+        try {
+            targetDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-M-d"));
+        } catch (DateTimeParseException e) {
+            throw new LebronException("Error - invalid date format. Use yyyy-MM-dd format.");
+        }
+
+        List<Task> tasksOnDate = new ArrayList<>();
+        for (Task task : taskList) {
+            if (task instanceof Deadline) {
+                if (((Deadline) task).isOnDate(targetDate)) {
+                    tasksOnDate.add(task);
+                }
+            } else if (task instanceof Event) {
+                if (((Event) task).isOnDate(targetDate)) {
+                    tasksOnDate.add(task);
+                }
+            }
+        }
+
+        System.out.println("    ____________________________________________________________");
+        if (tasksOnDate.isEmpty()) {
+            System.out.println("    No tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
+        } else {
+            System.out.println("    Tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
+            for (int i = 0; i < tasksOnDate.size(); i++) {
+                System.out.println("    " + (i + 1) + "." + tasksOnDate.get(i).toString());
+            }
+        }
+        System.out.println("    ____________________________________________________________");
+    }
+
     public static void handleInputs() {
         // check for user input and terminate if user says "bye"
         Scanner sc = new Scanner(System.in);
@@ -256,93 +309,97 @@ public class Lebron {
                 String desc = t.getDescription();
                 CommandType type = CommandType.parse(desc);
                 switch (type) {
-                    case BYE:
-                        return;
-                    case LIST: {
-                        handleList(loadTasks());
-                        break;
+                case BYE:
+                    return;
+                case CHECK:
+                    handleCheck(command, taskList);
+                    break;
+                case LIST: {
+                    handleList(loadTasks());
+                    break;
+                }
+                case MARK: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - missing index for \"mark\".");
                     }
-                    case MARK: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - missing index for \"mark\".");
-                        }
-                        try {
-                            Integer.parseInt(parts[1].trim());
-                        } catch (NumberFormatException e) {
-                            throw new LebronException("Error - task to be marked must be a number.");
-                        }
-                        mark(t, taskList);
-                        saveTasks(taskList);
-                        break;
+                    try {
+                        Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new LebronException("Error - task to be marked must be a number.");
                     }
-                    case UNMARK: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - missing index for \"mark\".");
-                        }
-                        try {
-                            Integer.parseInt(parts[1].trim());
-                        } catch (NumberFormatException e) {
-                            throw new LebronException("Error - task to be unmarked must be a number.");
-                        }
-                        unmark(t, taskList);
-                        saveTasks(taskList);
-                        break;
+                    mark(t, taskList);
+                    saveTasks(taskList);
+                    break;
+                }
+                case UNMARK: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - missing index for \"mark\".");
                     }
-                    case DELETE: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - task to delete not specified.");
-                        }
-                        try {
-                            Integer.parseInt(parts[1].trim());
-                        } catch (NumberFormatException e) {
-                            throw new LebronException("Error - task to be deleted must be a number.");
-                        }
-                        deleteTask(t, taskList, i);
-                        --i;
-                        saveTasks(taskList);
-                        break;
+                    try {
+                        Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new LebronException("Error - task to be unmarked must be a number.");
                     }
-                    case TODO: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - description of a todo cannot be empty.");
-                        }
-                        handleTasks(taskList, command, t, i);
-                        ++i;
-                        saveTasks(taskList);
-                        break;
+                    unmark(t, taskList);
+                    saveTasks(taskList);
+                    break;
+                }
+                case DELETE: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - task to delete not specified.");
                     }
-                    case DEADLINE: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - description of a deadline cannot be empty.");
-                        }
-                        if (!parts[1].contains("/by")) {
-                            throw new LebronException("Error - deadline description missing time. \nUse: deadline <desc> /by <time>");
-                        }
-                        handleTasks(taskList, command, t, i);
-                        ++i;
-                        saveTasks(taskList);
-                        break;
+                    try {
+                        Integer.parseInt(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        throw new LebronException("Error - task to be deleted must be a number.");
                     }
-                    case EVENT: {
-                        String[] parts = desc.split("\\s+", 2);
-                        if (parts.length < 2 || parts[1].isBlank()) {
-                            throw new LebronException("Error - description of an event cannot be empty.");
-                        }
-                        String rest = parts[1];
-                        if (!rest.contains("/from") || !rest.contains("/to")) {
-                            throw new LebronException("Error - event description missing start/end time. \nUse: event <desc> /from <start> /to <end>");
-                        }
-                        handleTasks(taskList, command, t, i);
-                        ++i;
-                        saveTasks(taskList);
-                        break;
+                    deleteTask(t, taskList, i);
+                    --i;
+                    saveTasks(taskList);
+                    break;
+                }
+                case TODO: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of a todo cannot be empty.");
                     }
-
+                    handleTasks(taskList, command, t, i);
+                    ++i;
+                    saveTasks(taskList);
+                    break;
+                }
+                case DEADLINE: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of a deadline cannot be empty.");
+                    }
+                    if (!parts[1].contains("/by")) {
+                        throw new LebronException("Error - deadline description missing time.\n" +
+                                "    Use: deadline <desc> /by <time>");
+                    }
+                    handleTasks(taskList, command, t, i);
+                    ++i;
+                    saveTasks(taskList);
+                    break;
+                }
+                case EVENT: {
+                    String[] parts = desc.split("\\s+", 2);
+                    if (parts.length < 2 || parts[1].isBlank()) {
+                        throw new LebronException("Error - description of an event cannot be empty.");
+                    }
+                    String rest = parts[1];
+                    if (!rest.contains("/from") || !rest.contains("/to")) {
+                        throw new LebronException("Error - event description missing start/end time.\n" +
+                                "    Use: event <desc> /from <start> /to <end>");
+                    }
+                    handleTasks(taskList, command, t, i);
+                    ++i;
+                    saveTasks(taskList);
+                    break;
+                }
                 }
             } catch (LebronException e) {
                 System.out.println("    ____________________________________________________________");
