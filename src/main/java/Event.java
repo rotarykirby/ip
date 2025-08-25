@@ -11,8 +11,8 @@ public class Event extends Task {
     protected boolean fromTime;
     protected boolean toTime;
 
-    private static final DateTimeFormatter INPUT_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter INPUT_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+    private static final DateTimeFormatter INPUT_DATE = DateTimeFormatter.ofPattern("yyyy-M-d");
+    private static final DateTimeFormatter INPUT_DATETIME = DateTimeFormatter.ofPattern("yyyy-M-d HHmm");
     private static final DateTimeFormatter OUTPUT_DATE = DateTimeFormatter.ofPattern("MMM d yyyy");
     private static final DateTimeFormatter OUTPUT_DATETIME = DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a");
 
@@ -24,7 +24,7 @@ public class Event extends Task {
 
     private void parseFrom(String from) throws LebronException {
         if (from == null || from.trim().isEmpty()) {
-            throw new LebronException("Cannot have empty /from. Consider using deadline if no start time");
+            throw new LebronException("Cannot have empty /from. Consider using deadline if no start time.");
         }
 
         from = from.trim();
@@ -40,7 +40,10 @@ public class Event extends Task {
                 this.fromTime = false;
             } catch (DateTimeParseException e2) {
                 // Not a valid date format
-                throw new LebronException("Enter a valid /from format:\n\nyyyy-MM-dd HHmm\nyyyy-MM-dd");
+                System.out.println(from);
+                throw new LebronException("Enter a valid /from format:\n\n" +
+                        "    yyyy-MM-dd HHmm\n" +
+                        "    yyyy-MM-dd");
             }
         }
     }
@@ -63,7 +66,9 @@ public class Event extends Task {
                 this.toTime = false;
             } catch (DateTimeParseException e2) {
                 // Not a valid date format
-                throw new LebronException("Enter a valid /to format:\n\nyyyy-MM-dd HHmm\nyyyy-MM-dd");
+                throw new LebronException("Enter a valid /to format:\n\n" +
+                        "    yyyy-MM-dd HHmm\n" +
+                        "    yyyy-MM-dd");
             }
         }
     }
@@ -84,8 +89,24 @@ public class Event extends Task {
         }
     }
 
+    public String getOriginalFrom() {
+        if (fromTime) {
+            return fromDateTime.format(INPUT_DATETIME);
+        } else {
+            return fromDate.format(INPUT_DATE);
+        }
+    }
+
+    public String getOriginalTo() {
+        if (toTime) {
+            return toDateTime.format(INPUT_DATETIME);
+        } else {
+            return toDate.format(INPUT_DATE);
+        }
+    }
+
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + this.getFrom() + "to: " + this.getTo() + ")";
+        return "[E]" + super.toString() + " (from: " + this.getFrom() + " to: " + this.getTo() + ")";
     }
 }

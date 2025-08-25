@@ -68,12 +68,12 @@ public class Lebron {
             return taskType + " | " + isDone + " | " + t.getDescription();
         } else if (t instanceof Deadline) {
             taskType = "D";
-            extra1 = ((Deadline) t).getBy();
+            extra1 = ((Deadline) t).getOriginalBy();
             return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1;
         } else {
             taskType = "E";
-            extra1 = ((Event) t).getFrom();
-            String extra2 = ((Event) t).getTo();
+            extra1 = ((Event) t).getOriginalFrom();
+            String extra2 = ((Event) t).getOriginalTo();
             return taskType + " | " + isDone + " | " + t.getDescription() + " | " + extra1 + " – " + extra2;
         }
     }
@@ -201,18 +201,19 @@ public class Lebron {
     public static void handleTasks(List<Task> taskList, String command, Task t, int i) throws LebronException {
         if (command.startsWith("deadline ")) {
             int pos = command.indexOf("/by ");
-            String description = command.substring(9, pos);
-            String by = command.substring(pos + 4);
+            String description = command.substring(9, pos).trim();
+            String by = command.substring(pos + 4).trim();
             taskList.add(new Deadline(description, by));
             printTask(taskList, i);
         } else if (command.startsWith("event ")) {
             int pos = command.indexOf("/from ");
             int pos2 = command.indexOf("/to ");
-            String description = command.substring(6, pos);
-            String from = command.substring(pos + 6, pos2);
-            String to = command.substring(pos2 + 4);
+            String description = command.substring(6, pos).trim();
+            String from = command.substring(pos + 6, pos2).trim();
+            String to = command.substring(pos2 + 4).trim();
             if (from.contains("–") || to.contains("–")) {
-                throw new LebronException("Failed to add event. Please try again without using \"–\" as a character");
+                throw new LebronException("Failed to add event. " +
+                        "Please try again without using \"–\" (en dash) as a character.");
             }
             taskList.add(new Event(description, from, to));
             printTask(taskList, i);
@@ -321,7 +322,8 @@ public class Lebron {
                             throw new LebronException("Error - description of a deadline cannot be empty.");
                         }
                         if (!parts[1].contains("/by")) {
-                            throw new LebronException("Error - deadline description missing time. \nUse: deadline <desc> /by <time>");
+                            throw new LebronException("Error - deadline description missing time.\n" +
+                                    "    Use: deadline <desc> /by <time>");
                         }
                         handleTasks(taskList, command, t, i);
                         ++i;
@@ -335,7 +337,8 @@ public class Lebron {
                         }
                         String rest = parts[1];
                         if (!rest.contains("/from") || !rest.contains("/to")) {
-                            throw new LebronException("Error - event description missing start/end time. \nUse: event <desc> /from <start> /to <end>");
+                            throw new LebronException("Error - event description missing start/end time.\n" +
+                                    "    Use: event <desc> /from <start> /to <end>");
                         }
                         handleTasks(taskList, command, t, i);
                         ++i;
