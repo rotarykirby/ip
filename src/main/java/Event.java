@@ -93,6 +93,12 @@ public class Event extends Task {
         }
     }
 
+    public boolean isOnDate(LocalDate date) {
+        LocalDate from = time ? fromDateTime.toLocalDate() : fromDate;
+        LocalDate to = time ? toDateTime.toLocalDate() : toDate;
+        return !date.isBefore(from) && !date.isAfter(to);
+    }
+
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + this.getFrom() + " to: " + this.getTo() + ")";

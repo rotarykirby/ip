@@ -59,6 +59,10 @@ public class Deadline extends Task {
         }
     }
 
+    public boolean isOnDate(LocalDate date) {
+        return time ? byDateTime.toLocalDate().equals(date) : byDate.equals(date);
+    }
+
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + this.getBy() + ")";
