@@ -23,7 +23,7 @@ public class Task {
         this.isDone = true;
     }
 
-    public void unmarkDone() {
+    public void markUndone() {
         this.isDone = false;
     }
 
