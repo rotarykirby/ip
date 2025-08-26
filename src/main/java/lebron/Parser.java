@@ -1,3 +1,5 @@
+package lebron;
+
 public class Parser {
     public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK; }
 
