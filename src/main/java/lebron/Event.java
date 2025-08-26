@@ -1,3 +1,5 @@
+package lebron;
+
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +27,7 @@ public class Event extends Task {
             throw new LebronException("Cannot have empty /from. Consider using deadline if no start time.");
         }
         if (to == null || to.trim().isEmpty()) {
-            throw new LebronException("Cannot have empty /to. Event must end eventually!!");
+            throw new LebronException("Cannot have empty /to. Lebron.Event must end eventually!!");
         }
 
         from = from.trim();
@@ -37,7 +39,7 @@ public class Event extends Task {
             this.toDateTime = LocalDateTime.parse(to, INPUT_DATETIME);
             this.time = true;
             if (fromDateTime.isAfter(toDateTime)) {
-                throw new LebronException("Event start time cannot be after end time");
+                throw new LebronException("Lebron.Event start time cannot be after end time");
             }
             return;
         } catch (DateTimeParseException e1) {
@@ -47,7 +49,7 @@ public class Event extends Task {
                 this.toDate = LocalDate.parse(to, INPUT_DATE);
                 this.time = false;
                 if (fromDate.isAfter(toDate)) {
-                    throw new LebronException("Event start date cannot be after end date");
+                    throw new LebronException("Lebron.Event start date cannot be after end date");
                 }
                 return;
             } catch (DateTimeParseException e2) {

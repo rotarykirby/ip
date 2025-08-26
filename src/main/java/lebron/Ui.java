@@ -1,3 +1,5 @@
+package lebron;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,7 +12,7 @@ public class Ui {
     private final Scanner sc = new Scanner(System.in);
 
     public void greeting() {
-        System.out.println(LINE + "\n    Hello! I'm Lebron\n" + "    What can I do for you?\n" + LINE);
+        System.out.println(LINE + "\n    Hello! I'm Lebron.Lebron\n" + "    What can I do for you?\n" + LINE);
     }
 
     public void bye() {

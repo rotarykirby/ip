@@ -1,3 +1,5 @@
+package lebron;
+
 import java.util.List;
 
 public class Lebron {
@@ -95,7 +97,7 @@ public class Lebron {
     }
 
     public static void main(String[] args) {
-        new Lebron("./data/Lebron.txt").run();
+        new Lebron("./data/Lebron.Lebron.txt").run();
     }
 }
 
