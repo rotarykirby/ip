@@ -13,5 +13,9 @@ src/main/resources/docs/
 *.iml
 bin/
 
+# Created Jar file and the text file it created
+/build/libs/data/
+/build/libs/lebron.jar
+
 /text-ui-test/ACTUAL.TXT
 text-ui-test/EXPECTED-UNIX.TXT
