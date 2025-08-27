@@ -24,7 +24,7 @@ public class Deadline extends Task {
     }
 
     /**
-     * Parses the date/time the task has to be done by.
+     * Parses the date/time the task has to be done by. 
      * Ensures that formatting is correct and can be understood by other functions in the program.
      *
      * @param by the date/time the task has to be done by.
