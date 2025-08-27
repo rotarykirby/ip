@@ -2,6 +2,9 @@ package lebron;
 
 import java.util.List;
 
+/**
+ * Main class that combines UI, Storage and TaskList.
+ */
 public class Lebron {
 
     private final Storage storage;
@@ -24,6 +27,10 @@ public class Lebron {
         this.taskList = temp;
     }
 
+    /**
+     * Shows user a greeting, before waiting for user's commands. Runs a loop that performs tasks based on the user's
+     * input. Loop breaks when user types "bye", then shows user a goodbye message before exiting.
+     */
     public void run() {
         ui.greeting();
         boolean isExit = false;
@@ -96,6 +103,11 @@ public class Lebron {
         }
     }
 
+    /**
+     * Program's main.
+     *
+     * @param args args.
+     */
     public static void main(String[] args) {
         new Lebron("./data/Lebron.txt").run();
     }
