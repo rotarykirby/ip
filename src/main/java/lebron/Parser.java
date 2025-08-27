@@ -1,5 +1,8 @@
 package lebron;
 
+/**
+ * Parses raw user input strings into structured commands that the program can then interpret and execute.
+ */
 public class Parser {
     public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK; }
 
@@ -17,6 +20,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses raw user input into a structured command.
+     *
+     * @param raw the raw user input.
+     * @return the parsedCommand.
+     * @throws LebronException if the user input does not follow the format of the command supported.
+     */
     public static ParsedCommand parse(String raw) throws LebronException {
         if (raw == null || raw.isEmpty()) {
             throw new LebronException("Error - command cannot be empty.");
@@ -88,6 +98,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Used by parse method above to determine the index of the task.
+     *
+     * @param s the index of task to be marked/unmarked/deleted.
+     * @param usage the correct, formatted usage instruction.
+     * @return the int of the index.
+     * @throws LebronException if there was a missing index or if the index specified was not a positive integer.
+     */
     private static int parseIndex(String s, String usage) throws LebronException {
         s = s.trim();
         if (s.isEmpty()) {

@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * A task that must be completed by a specific date/time, specified after /by
+ */
 public class Deadline extends Task {
     protected LocalDate byDate;
     protected LocalDateTime byDateTime;
@@ -20,6 +23,13 @@ public class Deadline extends Task {
         parseBy(by);
     }
 
+    /**
+     * Parses the date/time the task has to be done by.
+     * Ensures that formatting is correct and can be understood by other functions in the program.
+     *
+     * @param by the date/time the task has to be done by.
+     * @throws LebronException if empty date/time or invalid format is encountered
+     */
     private void parseBy(String by) throws LebronException {
         if (by == null || by.trim().isEmpty()) {
             throw new LebronException("Deadline's date/time cannot be empty.");
@@ -45,6 +55,11 @@ public class Deadline extends Task {
         }
     }
 
+    /**
+     * Returns the formatted deadline.
+     *
+     * @return the deadline string.
+     */
     public String getBy() {
         if (time) {
             return byDateTime.format(OUTPUT_DATETIME);
@@ -53,6 +68,11 @@ public class Deadline extends Task {
         }
     }
 
+    /**
+     * Returns the original formatted deadline, as entered by the user
+     *
+     * @return the original deadline string.
+     */
     public String getOriginalBy() {
         if (time) {
             return byDateTime.format(INPUT_DATETIME);
@@ -61,10 +81,21 @@ public class Deadline extends Task {
         }
     }
 
+    /**
+     * Returns true if this task occurs on or during the specified date, false otherwise.
+     *
+     * @param date the date.
+     * @return the boolean.
+     */
     public boolean isOnDate(LocalDate date) {
         return time ? byDateTime.toLocalDate().equals(date) : byDate.equals(date);
     }
 
+    /**
+     * Returns a human-readable string for display.
+     *
+     * @return Human-readable string.
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + this.getBy() + ")";

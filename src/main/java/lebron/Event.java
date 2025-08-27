@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * A task that spans a date or date-time range (from ... to ...).
+ */
 public class Event extends Task {
     protected LocalDate fromDate;
     protected LocalDateTime fromDateTime;
@@ -22,6 +25,15 @@ public class Event extends Task {
         parseFromTo(from, to);
     }
 
+    /**
+     * Parses the date/time the event starts and ends.
+     * Ensures that formatting is correct and can be understood by other functions in the program.
+     *
+     * @param from the date/time the event starts.
+     * @param to the date/time the event ends.
+     * @throws LebronException if empty date/time, event end time is before start time,
+     * or if invalid format is encountered.
+     */
     private void parseFromTo(String from, String to) throws LebronException {
         if (from == null || from.trim().isEmpty()) {
             throw new LebronException("Cannot have empty /from. Consider using deadline if no start time.");
@@ -63,6 +75,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns the formatted start date/time.
+     *
+     * @return the formatted start date/time.
+     */
     public String getFrom() {
         if (time) {
             return fromDateTime.format(OUTPUT_DATETIME);
@@ -71,6 +88,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns the formatted end date/time.
+     *
+     * @return the formatted end date/time.
+     */
     public String getTo() {
         if (time) {
             return toDateTime.format(OUTPUT_DATETIME);
@@ -79,6 +101,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns the original start date/time string as typed by the user.
+     *
+     * @return the formatted start date/time.
+     */
     public String getOriginalFrom() {
         if (time) {
             return fromDateTime.format(INPUT_DATETIME);
@@ -87,6 +114,11 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns the original end date/time string as typed by the user.
+     *
+     * @return the formatted end date/time.
+     */
     public String getOriginalTo() {
         if (time) {
             return toDateTime.format(INPUT_DATETIME);
@@ -95,12 +127,23 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Returns true if this event occurs on the specified date.
+     *
+     * @param date the date.
+     * @return the boolean.
+     */
     public boolean isOnDate(LocalDate date) {
         LocalDate from = time ? fromDateTime.toLocalDate() : fromDate;
         LocalDate to = time ? toDateTime.toLocalDate() : toDate;
         return !date.isBefore(from) && !date.isAfter(to);
     }
 
+    /**
+     * Returns a human-readable string for display.
+     *
+     * @return Human-readable string.
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + this.getFrom() + " to: " + this.getTo() + ")";

@@ -9,12 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Ensures that tasks are saved and read properly by loading from and saving to a flat text file.
+ */
 public class Storage {
     private final String filePath;
 
     public Storage(String filePath) {
         this.filePath = filePath;
     }
+
+    /**
+     * Loads tasks from the text file into memory.
+     *
+     * @return the list of tasks.
+     * @throws LebronException if unable to load the save file
+     */
 
     public List<Task> loadTasks() throws LebronException {
         List<Task> taskList = new ArrayList<>();
@@ -25,7 +35,7 @@ public class Storage {
             Files.createDirectories(p.getParent());
             if (!Files.exists(p)) {
                 Files.createFile(p);
-                return taskList; // first run -> empty
+                return taskList;
             }
         } catch (IOException e) {
             throw new LebronException("Error - Cannot prepare save file: " + e.getMessage());
@@ -43,7 +53,12 @@ public class Storage {
         }
     }
 
-
+    /**
+     * Writes all tasks to the text file.
+     *
+     * @param taskList the list of tasks to be written.
+     * @throws LebronException if unable to write tasks.
+     */
     public void saveTasks(List<Task> taskList) throws LebronException {
         Path p = Paths.get(filePath);
 
@@ -60,6 +75,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Parses a singular line in the save file into a singular Task instance.
+     *
+     * @param s the line in the file.
+     * @return the task.
+     * @throws LebronException if missing date/time from event and deadline tasks.
+     */
     private Task parseTask(String s) throws LebronException {
         if (s == null || s.trim().isEmpty()) {
             return null;
@@ -100,6 +122,12 @@ public class Storage {
         return t;
     }
 
+    /**
+     * Formats a single task into a single-line representation for the save file.
+     *
+     * @param t the ask.
+     * @return the single-line representation to be written into the save file.
+     */
     private String formatToWrite(Task t) {
         String taskType;
         boolean isDone = t.getIsDone();
