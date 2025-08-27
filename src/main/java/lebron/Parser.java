@@ -21,8 +21,8 @@ public class Parser {
         if (raw == null || raw.isEmpty()) {
             throw new LebronException("Error - command cannot be empty.");
         }
-        String[] first = raw.split("\\s+", 2);
-        String head = first[0].toLowerCase();
+        String[] first = raw.trim().split("\\s+", 2);
+        String head = first[0].toLowerCase().trim();
         String rest = first.length > 1 ? first[1] : "";
 
         switch (head) {
@@ -71,6 +71,8 @@ public class Parser {
             String to = rest.substring(toPart + 3).trim();
             if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
                 throw new LebronException("Error - event needs description, /from and /to.");
+            } else if (from.contains("–") || to.contains("–")) {
+                throw new LebronException("Error - event start and end time cannot contain character \"–\"");
             }
             return new ParsedCommand(CommandType.EVENT, desc, from, to, -1);
         }

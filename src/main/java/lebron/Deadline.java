@@ -22,7 +22,7 @@ public class Deadline extends Task {
 
     private void parseBy(String by) throws LebronException {
         if (by == null || by.trim().isEmpty()) {
-            throw new LebronException("Lebron.Deadline's date/time cannot be empty.");
+            throw new LebronException("Deadline's date/time cannot be empty.");
         }
 
         by = by.trim();
@@ -38,7 +38,7 @@ public class Deadline extends Task {
                 this.time = false;
             } catch (DateTimeParseException e2) {
                 // Not a valid date format
-                throw new LebronException("Enter a valid Lebron.Deadline format:\n\n" +
+                throw new LebronException("Enter a valid Deadline format:\n\n" +
                         "    yyyy-MM-dd HHmm\n" +
                         "    yyyy-MM-dd");
             }
