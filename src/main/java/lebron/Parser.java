@@ -4,7 +4,7 @@ package lebron;
  * Parses raw user input strings into structured commands that the program can then interpret and execute.
  */
 public class Parser {
-    public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK; }
+    public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
 
     public static final class ParsedCommand {
         public final CommandType type;
@@ -69,7 +69,6 @@ public class Parser {
             }
             return new ParsedCommand(CommandType.DEADLINE, desc, by, null, -1);
         }
-
         case "event": {
             int fromPart = rest.indexOf("/from");
             int toPart = rest.indexOf("/to");
@@ -86,12 +85,16 @@ public class Parser {
             }
             return new ParsedCommand(CommandType.EVENT, desc, from, to, -1);
         }
-
         case "check":
             if (rest.isEmpty()) {
                 throw new LebronException("Error - Use: check <yyyy-MM-dd>");
             }
             return new ParsedCommand(CommandType.CHECK, rest, null, null, -1);
+        case "find":
+            if (rest.isEmpty()) {
+                throw new LebronException("Error - keyword(s) not specified.");
+            }
+            return new ParsedCommand(CommandType.FIND, rest, null, null, -1);
 
         default:
             throw new LebronException("Error - What talking you?");

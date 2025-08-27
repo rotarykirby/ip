@@ -55,6 +55,10 @@ public class Lebron {
                     ui.handleList(taskList);
                     break;
                 }
+                case FIND: {
+                    ui.handleFind(taskList, pc.arg1);
+                    break;
+                }
                 case MARK: {
                     Task t = taskList.mark(pc.index);
                     ui.showMarked(t);

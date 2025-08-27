@@ -53,6 +53,41 @@ public class Ui {
     }
 
     /**
+     * Identifies matches in substring between tasks in tasklist and the keyword.
+     * Prints all the matches, if any
+     *
+     * @param taskList list of tasks
+     * @param keyword substring to search for
+     */
+    public void handleFind(TaskList taskList, String keyword) {
+        keyword = keyword.trim().toLowerCase();
+        List<Task> matches = new ArrayList<>();
+
+        for (int i = 0; i < taskList.size(); i++) {
+            String desc = taskList.get(i).getDescription();
+            if (desc.toLowerCase().contains(keyword)) {
+                matches.add(taskList.get(i));
+            }
+        }
+
+        int size = matches.size();
+
+        System.out.println(LINE);
+        if (matches.isEmpty()) {
+            System.out.println("    No matching tasks found.");
+        } else if (size == 1) {
+            System.out.println("    Here is the only matching task in your list:");
+            System.out.println("    " + matches.get(0));
+        } else {
+            System.out.println("    Here are the matching tasks in your list");
+            for (int i = 0; i < size; i++) {
+                System.out.println("    " + matches.get(i));
+            }
+        }
+        System.out.println(LINE);
+    }
+
+    /**
      * Prints all tasks that occur on the specified date.
      *
      * @param taskList the list of tasks currently added.
