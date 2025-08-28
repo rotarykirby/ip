@@ -8,6 +8,11 @@ public class Task {
     protected String description;
     protected boolean isDone;
 
+    /**
+     * Creates an instance of a basic task with a description and a done/not done indicator
+     *
+     * @param description description of the task
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;

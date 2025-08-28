@@ -11,6 +11,11 @@ public class Lebron {
     private final TaskList taskList;
     private final Ui ui;
 
+    /**
+     * Constructs the program, wiring the UI and storage, load any previously saved tasks from the given file path.
+     *
+     * @param filePath path to the save file.
+     */
     public Lebron(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(filePath);

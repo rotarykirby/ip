@@ -6,6 +6,10 @@ package lebron;
 public class Parser {
     public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
 
+    /**
+     * Class that ensures all the commands are formatted properly
+     * and its individual parts can be accessed easily
+     */
     public static final class ParsedCommand {
         public final CommandType type;
         public final String arg1, arg2, arg3;

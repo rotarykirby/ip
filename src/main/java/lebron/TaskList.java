@@ -10,10 +10,18 @@ import java.util.ArrayList;
 public class TaskList {
     private final List<Task> tasks;
 
+    /**
+     * Creates a task list instance with an empty array list if no list of tasks is specified.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Creates a task list instance with the specified list of tasks.
+     *
+     * @param tasks list of tasks.
+     */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
     }

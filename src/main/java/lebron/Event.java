@@ -20,6 +20,14 @@ public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_DATE = DateTimeFormatter.ofPattern("MMM d yyyy");
     private static final DateTimeFormatter OUTPUT_DATETIME = DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a");
 
+    /**
+     * Creates an event instance that occurs from/to a specified date or date-time.
+     *
+     * @param description description of the task.
+     * @param from the date/time the event starts.
+     * @param to the date/time the event ends.
+     * @throws LebronException if time is in an invalid format
+     */
     public Event(String description, String from, String to) throws LebronException {
         super(description);
         parseFromTo(from, to);

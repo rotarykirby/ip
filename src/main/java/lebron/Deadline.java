@@ -18,6 +18,13 @@ public class Deadline extends Task {
     private static final DateTimeFormatter OUTPUT_DATE = DateTimeFormatter.ofPattern("MMM d yyyy");
     private static final DateTimeFormatter OUTPUT_DATETIME = DateTimeFormatter.ofPattern("MMM d yyyy, h:mm a");
 
+    /**
+     * Creates a Deadline task due on the specified date or date-time.
+     *
+     * @param description description of the task.
+     * @param by the due date/time.
+     * @throws LebronException if time is in an invalid format
+     */
     public Deadline(String description, String by) throws LebronException {
         super(description);
         parseBy(by);

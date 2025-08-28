@@ -15,6 +15,12 @@ import java.util.Scanner;
 public class Storage {
     private final String filePath;
 
+    /**
+     * Helps to store and read from the specified save file path by reformatting and interpreting
+     * both the stored strings and the strings to be stored.
+     *
+     * @param filePath save file path.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }

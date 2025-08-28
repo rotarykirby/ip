@@ -5,6 +5,11 @@ package lebron;
  */
 public class Todo extends Task {
 
+    /**
+     * Creates an instance of a task with no specified deadline or any associated date/time.
+     *
+     * @param description description of the task.
+     */
     public Todo(String description) {
         super(description);
     }
