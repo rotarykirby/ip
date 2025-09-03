@@ -1,12 +1,12 @@
 package lebron;
 
 /**
- * A simple task with only a description and no associated date/time.
+ * A simple task with only a description and no associated date/hasTime.
  */
 public class Todo extends Task {
 
     /**
-     * Creates an instance of a task with no specified deadline or any associated date/time.
+     * Creates an instance of a task with no specified deadline or any associated date/hasTime.
      *
      * @param description description of the task.
      */

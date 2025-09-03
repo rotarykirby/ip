@@ -46,7 +46,7 @@ public class Ui {
      * @return the trimmed line (if any).
      */
     public String readCommand() {
-        if (!sc.hasNextLine()){
+        if (!sc.hasNextLine()) {
             return null;
         }
         return sc.nextLine().trim();
@@ -119,9 +119,11 @@ public class Ui {
 
         System.out.println(LINE);
         if (tasksOnDate.isEmpty()) {
-            System.out.println("    No tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
+            System.out.println("    No tasks scheduled for "
+                    + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
         } else {
-            System.out.println("    Tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
+            System.out.println("    Tasks scheduled for "
+                    + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
             for (int i = 0; i < tasksOnDate.size(); i++) {
                 System.out.println("    " + (i + 1) + "." + tasksOnDate.get(i).toString());
             }
@@ -152,9 +154,9 @@ public class Ui {
      * @param t the task.
      */
     public void showMarked(Task t) {
-        System.out.println(LINE + "\n    Nice! I've marked this task as done:\n" +
-                "      [X] " + t.getDescription() +
-                "\n" + LINE);
+        System.out.println(LINE + "\n    Nice! I've marked this task as done:\n"
+                + "      [X] " + t.getDescription()
+                + "\n" + LINE);
     }
 
     /**
@@ -163,9 +165,9 @@ public class Ui {
      * @param t the task.
      */
     public void showUnmarked(Task t) {
-        System.out.println(LINE + "\n    OK, I've marked this task as not done yet:\n" +
-                "      [ ] " + t.getDescription() +
-                "\n" + LINE);
+        System.out.println(LINE + "\n    OK, I've marked this task as not done yet:\n"
+                + "      [ ] " + t.getDescription()
+                + "\n" + LINE);
     }
 
     /**
@@ -176,10 +178,10 @@ public class Ui {
      * @param size the new number of tasks in the new list.
      */
     public void showDeleted(Task removed, int size) {
-        System.out.println(LINE + "\n    Noted. I've removed this task:\n" +
-                "      " + removed.toString() +
-                String.format("\n    Now you have %d %s in the list.", size , size == 1 ? "task" : "tasks") +
-                "\n" + LINE);
+        System.out.println(LINE + "\n    Noted. I've removed this task:\n"
+                + "      " + removed.toString()
+                + String.format("\n    Now you have %d %s in the list.", size , size == 1 ? "task" : "tasks")
+                + "\n" + LINE);
     }
 
     /**
@@ -190,10 +192,10 @@ public class Ui {
      * @param size the new number of tasks in the new list.
      */
     public void showAdded(Task t, int size) {
-        System.out.println(LINE + "\n    Got it. I've added this task:\n" +
-                "      " + t.toString() +
-                String.format("\n    Now you have %d %s in the list.", size , size == 0 ? "task" : "tasks") +
-                "\n" + LINE);
+        System.out.println(LINE + "\n    Got it. I've added this task:\n"
+                + "      " + t.toString()
+                + String.format("\n    Now you have %d %s in the list.", size , size == 0 ? "task" : "tasks")
+                + "\n" + LINE);
     }
 
     /**

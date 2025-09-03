@@ -1,7 +1,7 @@
 package lebron;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Container for a list of tasks.
@@ -63,7 +63,9 @@ public class TaskList {
      */
     public Task delete(int idx) throws LebronException {
         --idx;
-        if (idx < 0 || idx >= tasks.size()) throw new LebronException("Error - index out of range.");
+        if (idx < 0 || idx >= tasks.size()) {
+            throw new LebronException("Error - index out of range.");
+        }
         return tasks.remove(idx);
     }
 
@@ -76,7 +78,9 @@ public class TaskList {
      */
     public Task mark(int idx) throws LebronException {
         --idx;
-        if (idx < 0 || idx >= tasks.size()) throw new LebronException("Error - index out of range.");
+        if (idx < 0 || idx >= tasks.size()) {
+            throw new LebronException("Error - index out of range.");
+        }
         Task t = tasks.get(idx);
         t.markDone();
         return t;
@@ -91,7 +95,9 @@ public class TaskList {
      */
     public Task unmark(int idx) throws LebronException {
         --idx;
-        if (idx < 0 || idx >= tasks.size()) throw new LebronException("Error - index out of range.");
+        if (idx < 0 || idx >= tasks.size()) {
+            throw new LebronException("Error - index out of range.");
+        }
         Task t = tasks.get(idx);
         t.markUndone();
         return t;

@@ -4,6 +4,10 @@ package lebron;
  * Parses raw user input strings into structured commands that the program can then interpret and execute.
  */
 public class Parser {
+    /**
+     * Represents the different types of commands that can be issued by the user.
+     * Each command corresponds to a specific action that the application can perform.
+     */
     public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
 
     /**
@@ -11,9 +15,11 @@ public class Parser {
      * and its individual parts can be accessed easily
      */
     public static final class ParsedCommand {
-        public final CommandType type;
-        public final String arg1, arg2, arg3;
-        public final int index;
+        private CommandType type;
+        private String arg1;
+        private String arg2;
+        private String arg3;
+        private int index;
 
         private ParsedCommand(CommandType type, String arg1, String arg2, String arg3, int index) {
             this.type = type;
@@ -21,6 +27,26 @@ public class Parser {
             this.arg2 = arg2;
             this.arg3 = arg3;
             this.index = index;
+        }
+
+        public CommandType getType() {
+            return this.type;
+        }
+
+        public String getArg1() {
+            return this.arg1;
+        }
+
+        public String getArg2() {
+            return this.arg2;
+        }
+
+        public String getArg3() {
+            return this.arg3;
+        }
+
+        public int getIndex() {
+            return this.index;
         }
     }
 
@@ -85,7 +111,7 @@ public class Parser {
             if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
                 throw new LebronException("Error - event needs description, /from and /to.");
             } else if (from.contains("–") || to.contains("–")) {
-                throw new LebronException("Error - event start and end time cannot contain character \"–\"");
+                throw new LebronException("Error - event start and end hasTime cannot contain character \"–\"");
             }
             return new ParsedCommand(CommandType.EVENT, desc, from, to, -1);
         }
