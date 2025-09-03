@@ -51,7 +51,9 @@ public class Storage {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 Task t = parseTask(line);
-                if (t != null) taskList.add(t);
+                if (t != null) {
+                    taskList.add(t);
+                }
             }
             return taskList;
         } catch (IOException e) {
@@ -86,7 +88,7 @@ public class Storage {
      *
      * @param s the line in the file.
      * @return the task.
-     * @throws LebronException if missing date/time from event and deadline tasks.
+     * @throws LebronException if missing date/hasTime from event and deadline tasks.
      */
     private Task parseTask(String s) throws LebronException {
         if (s == null || s.trim().isEmpty()) {
@@ -105,21 +107,21 @@ public class Storage {
         String desc = parts[2].trim();
 
         t = switch (type) {
-            case "T" -> new Todo(desc);
-            case "D" -> {
-                if (parts.length < 4) {
-                    throw new LebronException("Error - Unable to save line (deadline missing /by): " + s);
-                }
-                yield new Deadline(desc, parts[3].trim());
+        case "T" -> new Todo(desc);
+        case "D" -> {
+            if (parts.length < 4) {
+                throw new LebronException("Error - Unable to save line (deadline missing /by): " + s);
             }
-            case "E" -> {
-                if (parts.length < 4) {
-                    throw new LebronException("Error - Unable to save line (event missing times): " + s);
-                }
-                String[] fromTo = parts[3].trim().split("–", 2);
-                yield new Event(desc, fromTo[0].trim(), fromTo[1].trim());
+            yield new Deadline(desc, parts[3].trim());
+        }
+        case "E" -> {
+            if (parts.length < 4) {
+                throw new LebronException("Error - Unable to save line (event missing times): " + s);
             }
-            default -> t;
+            String[] fromTo = parts[3].trim().split("–", 2);
+            yield new Event(desc, fromTo[0].trim(), fromTo[1].trim());
+        }
+        default -> t;
         };
 
         if (t != null && isDone) {

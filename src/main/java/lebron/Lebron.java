@@ -48,56 +48,56 @@ public class Lebron {
                 }
                 Parser.ParsedCommand pc = Parser.parse(command);
 
-                switch (pc.type) {
+                switch (pc.getType()) {
                 case BYE:
                     isExit = true;
                     ui.bye();
                     break;
                 case CHECK:
-                    ui.handleCheck(taskList, pc.arg1);
+                    ui.handleCheck(taskList, pc.getArg1());
                     break;
                 case LIST: {
                     ui.handleList(taskList);
                     break;
                 }
                 case FIND: {
-                    ui.handleFind(taskList, pc.arg1);
+                    ui.handleFind(taskList, pc.getArg1());
                     break;
                 }
                 case MARK: {
-                    Task t = taskList.mark(pc.index);
+                    Task t = taskList.mark(pc.getIndex());
                     ui.showMarked(t);
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case UNMARK: {
-                    Task t = taskList.unmark(pc.index);
+                    Task t = taskList.unmark(pc.getIndex());
                     ui.showUnmarked(t);
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case DELETE: {
-                    Task removed = taskList.delete(pc.index);
+                    Task removed = taskList.delete(pc.getIndex());
                     ui.showDeleted(removed, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case TODO: {
-                    Task t = new Todo(pc.arg1);
+                    Task t = new Todo(pc.getArg1());
                     taskList.add(t);
                     ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case DEADLINE: {
-                    Task t = new Deadline(pc.arg1, pc.arg2);
+                    Task t = new Deadline(pc.getArg1(), pc.getArg1());
                     taskList.add(t);
                     ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case EVENT: {
-                    Task t = new Event(pc.arg1, pc.arg2, pc.arg3);
+                    Task t = new Event(pc.getArg1(), pc.getArg2(), pc.getArg3());
                     taskList.add(t);
                     ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());

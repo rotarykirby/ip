@@ -1,6 +1,8 @@
 package lebron;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.Test;
 public class EventTest {
 
     @Test
-    void isOnDate_datetime_spanningMidnight_includesBothDays() throws LebronException {
+    void isOnDateDatetimeSpanningMidnightIncludesBothDays() throws LebronException {
         Event e = new Event("Overnight", "2025-08-26 2330", "2025-08-27 0030");
 
         assertTrue(e.isOnDate(LocalDate.of(2025, 8, 26)));
@@ -19,7 +21,7 @@ public class EventTest {
     }
 
     @Test
-    void isOnDate_dateOnly() throws LebronException {
+    void isOnDateDateOnly() throws LebronException {
         Event e = new Event("Camp", "2025-09-10", "2025-09-12");
 
         // Inclusive between start and end
@@ -33,14 +35,14 @@ public class EventTest {
     }
 
     @Test
-    void datetime_startAfterEnd_throws() {
+    void datetimeStartAfterEndThrows() {
         assertThrows(LebronException.class, () ->
                 new Event("Bad times", "2025-8-27 1609", "2025-8-27 1608")
         );
     }
 
     @Test
-    void invalidFormats_throws() {
+    void invalidFormatsThrows() {
         // Slashes not allowed
         assertThrows(LebronException.class, () ->
                 new Event("Bad format", "2025/08/27 0900", "2025/08/27 1000")
@@ -52,7 +54,7 @@ public class EventTest {
     }
 
     @Test
-    void toString_containsKeyParts() throws LebronException {
+    void toStringContainsKeyParts() throws LebronException {
         Event e = new Event("LEBRONNNN", "2025-08-27 0900", "2025-08-27 1000");
         String s = e.toString();
         assertTrue(s.startsWith("[E]"));
