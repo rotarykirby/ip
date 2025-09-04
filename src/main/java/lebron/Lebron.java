@@ -107,6 +107,10 @@ public class Lebron {
         return reply;
     }
 
+//    public String exit() {
+//
+//    }
+
     public String getResponse(String input) {
         String reply;
         if (input.trim() == "bye") {

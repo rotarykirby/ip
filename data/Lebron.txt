@@ -1,2 +1,3 @@
-D | false | asdfas | 1234-12-12
-T | true | sadfklasjf
+T | 1 | sadfklasjf
+T | 0 | sfsa
+T | 0 | sdf
