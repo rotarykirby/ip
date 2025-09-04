@@ -48,6 +48,12 @@ public class Lebron {
                 Parser.ParsedCommand pc = Parser.parse(command);
 
                 switch (pc.getType()) {
+                case HI:
+                    reply = ui.greeting();
+                    break;
+                case BYE:
+                    reply = ui.bye();
+                    break;
                 case CHECK:
                     reply = ui.handleCheck(taskList, pc.getArg1());
                     break;
@@ -107,19 +113,8 @@ public class Lebron {
         return reply;
     }
 
-//    public String exit() {
-//
-//    }
-
     public String getResponse(String input) {
-        String reply;
-        if (input.trim() == "bye") {
-            // exit program
-            return "temp";
-        } else {
-            reply = this.run(input);
-        }
-        return reply;
+        return this.run(input);
     }
 }
 

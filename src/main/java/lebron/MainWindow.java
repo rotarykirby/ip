@@ -1,5 +1,7 @@
 package lebron;
 
+import static java.lang.Thread.sleep;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -48,5 +50,8 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getLebronDialog(response, lebronImage)
         );
         userInput.clear();
+        if (input.equals("bye")) {
+            javafx.application.Platform.exit();
+        }
     }
 }
