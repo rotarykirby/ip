@@ -8,10 +8,17 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+/**
+ * Class that starts the GUI
+ */
 public class Main extends Application {
-
     private Lebron lebron = new Lebron("./data/Lebron.txt");
 
+    /**
+     * Sets up stage and other GUI elements.
+     *
+     * @param stage stage for GUI.
+     */
     @Override
     public void start(Stage stage) {
         try {
@@ -19,7 +26,7 @@ public class Main extends Application {
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setLebron(lebron);  // inject the Lebron instance
+            fxmlLoader.<MainWindow>getController().setLebron(lebron); // inject the Lebron instance
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,7 +1,5 @@
 package lebron;
 
-import static java.lang.Thread.sleep;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -27,12 +25,19 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private Image lebronImage = new Image(this.getClass().getResourceAsStream("/images/DaLebron.png"));
 
+    /**
+     * Initialises the scroll pane and dialog container.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
-    /** Injects the Lebron instance */
+    /**
+     * Injects the Lebron instance.
+     *
+     * @param l Lebron instance.
+     */
     public void setLebron(Lebron l) {
         lebron = l;
     }

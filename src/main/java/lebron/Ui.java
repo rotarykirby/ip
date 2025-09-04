@@ -112,13 +112,13 @@ public class Ui {
         }
 
         if (tasksOnDate.isEmpty()) {
-            return("No tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
+            return "No tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
         } else {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < tasksOnDate.size(); i++) {
                 sb.append("\n").append(i + 1).append(". ").append(tasksOnDate.get(i).toString());
             }
-            return"Tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":" + sb;
+            return "Tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":" + sb;
         }
     }
 
@@ -137,7 +137,7 @@ public class Ui {
             }
         }
 
-        return"Here are the tasks in your list:" + sb;
+        return "Here are the tasks in your list:" + sb;
     }
 
     /**
@@ -146,7 +146,7 @@ public class Ui {
      * @param t the task.
      */
     public String showMarked(Task t) {
-        return"Nice! I've marked this task as done:\n    [X] " + t.getDescription();
+        return "Nice! I've marked this task as done:\n    [X] " + t.getDescription();
     }
 
     /**
@@ -155,7 +155,7 @@ public class Ui {
      * @param t the task.
      */
     public String showUnmarked(Task t) {
-        return"OK, I've marked this task as not done yet:\n    [ ] " + t.getDescription();
+        return "OK, I've marked this task as not done yet:\n    [ ] " + t.getDescription();
     }
 
     /**
@@ -166,7 +166,7 @@ public class Ui {
      * @param size the new number of tasks in the new list.
      */
     public String showDeleted(Task removed, int size) {
-        return"Noted. I've removed this task:\n" + "      " + removed.toString()
+        return "Noted. I've removed this task:\n" + "      " + removed.toString()
                 + String.format("\nNow you have %d %s in the list.", size , size == 1 ? "task" : "tasks");
     }
 
@@ -178,7 +178,7 @@ public class Ui {
      * @param size the new number of tasks in the new list.
      */
     public String showAdded(Task t, int size) {
-        return"Got it. I've added this task:\n" + "      " + t.toString()
+        return "Got it. I've added this task:\n" + "      " + t.toString()
                 + String.format("\nNow you have %d %s in the list.", size , size == 0 ? "task" : "tasks");
     }
 
