@@ -91,7 +91,7 @@ public class Lebron {
                     break;
                 }
                 case DEADLINE: {
-                    Task t = new Deadline(pc.getArg1(), pc.getArg1());
+                    Task t = new Deadline(pc.getArg1(), pc.getArg2());
                     taskList.add(t);
                     reply = ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
