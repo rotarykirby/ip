@@ -11,21 +11,20 @@ import java.util.Scanner;
  * Class that is responsible for all user interaction - reading commands and writing formatted output.
  */
 public class Ui {
-    private static final String LINE = "    ____________________________________________________________";
     private final Scanner sc = new Scanner(System.in);
 
     /**
      * Prints greeting banner when Lebron starts.
      */
-    public void greeting() {
-        System.out.println(LINE + "\n    Hello! I'm Lebron\n" + "    What can I do for you?\n" + LINE);
+    public String greeting() {
+        return "Hello! I'm Lebron\n" + "What can I do for you?";
     }
 
     /**
      * Prints goodbye banner before Lebron exits.
      */
-    public void bye() {
-        System.out.println(LINE + "\n    Bye. Hope to see you again soon!\n" + LINE);
+    public String bye() {
+        return "Bye. Hope to see you again soon!";
     }
 
     /**
@@ -33,11 +32,8 @@ public class Ui {
      *
      * @param message the error message containing information on why loading failed.
      */
-    public void showLoadingError(String message) {
-        System.out.println(LINE);
-        System.out.println("    Error - Could not load tasks from file:");
-        System.out.println("    " + message);
-        System.out.println(LINE);
+    public String showLoadingError(String message) {
+        return "Error - Could not load tasks from file:\n" + "message";
     }
 
     /**
@@ -59,7 +55,7 @@ public class Ui {
      * @param taskList list of tasks
      * @param keyword substring to search for
      */
-    public void handleFind(TaskList taskList, String keyword) {
+    public String handleFind(TaskList taskList, String keyword) {
         keyword = keyword.trim().toLowerCase();
         List<Task> matches = new ArrayList<>();
 
@@ -72,19 +68,17 @@ public class Ui {
 
         int size = matches.size();
 
-        System.out.println(LINE);
         if (matches.isEmpty()) {
-            System.out.println("    No matching tasks found.");
+            return "No matching tasks found.";
         } else if (size == 1) {
-            System.out.println("    Here is the only matching task in your list:");
-            System.out.println("    " + matches.get(0));
+            return "Here is the only matching task in your list:\n" + matches.get(0);
         } else {
-            System.out.println("    Here are the matching tasks in your list");
-            for (int i = 0; i < size; i++) {
-                System.out.println("    " + matches.get(i));
+            StringBuilder tasks = new StringBuilder();
+            for (Task match : matches) {
+                tasks.append("\n").append(match);
             }
+            return "Here are the matching tasks in your list" + tasks;
         }
-        System.out.println(LINE);
     }
 
     /**
@@ -94,7 +88,7 @@ public class Ui {
      * @param date the date.
      * @throws LebronException if there is an invalid date format.
      */
-    public void handleCheck(TaskList taskList, String date) throws LebronException {
+    public String handleCheck(TaskList taskList, String date) throws LebronException {
         LocalDate targetDate;
 
         try {
@@ -117,18 +111,15 @@ public class Ui {
             }
         }
 
-        System.out.println(LINE);
         if (tasksOnDate.isEmpty()) {
-            System.out.println("    No tasks scheduled for "
-                    + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
+            return("No tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")));
         } else {
-            System.out.println("    Tasks scheduled for "
-                    + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < tasksOnDate.size(); i++) {
-                System.out.println("    " + (i + 1) + "." + tasksOnDate.get(i).toString());
+                sb.append("\n").append(i + 1).append(". ").append(tasksOnDate.get(i).toString());
             }
+            return"Tasks scheduled for " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":" + sb;
         }
-        System.out.println(LINE);
     }
 
     /**
@@ -136,16 +127,17 @@ public class Ui {
      *
      * @param taskList the list of tasks currently added.
      */
-    public void handleList(TaskList taskList) {
-        System.out.println(LINE + "\n    Here are the tasks in your list:");
+    public String handleList(TaskList taskList) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < taskList.size(); i++) {
             if (taskList.get(i) == null) {
                 break;
             } else {
-                System.out.println(String.format("    %d.", (i + 1)) + taskList.get(i).toString());
+                sb.append("\n").append(i + 1).append(". ").append(taskList.get(i).toString());
             }
         }
-        System.out.println(LINE);
+
+        return"Here are the tasks in your list:" + sb;
     }
 
     /**
@@ -153,10 +145,8 @@ public class Ui {
      *
      * @param t the task.
      */
-    public void showMarked(Task t) {
-        System.out.println(LINE + "\n    Nice! I've marked this task as done:\n"
-                + "      [X] " + t.getDescription()
-                + "\n" + LINE);
+    public String showMarked(Task t) {
+        return"Nice! I've marked this task as done:\n    [X] " + t.getDescription();
     }
 
     /**
@@ -164,10 +154,8 @@ public class Ui {
      *
      * @param t the task.
      */
-    public void showUnmarked(Task t) {
-        System.out.println(LINE + "\n    OK, I've marked this task as not done yet:\n"
-                + "      [ ] " + t.getDescription()
-                + "\n" + LINE);
+    public String showUnmarked(Task t) {
+        return"OK, I've marked this task as not done yet:\n    [ ] " + t.getDescription();
     }
 
     /**
@@ -177,11 +165,9 @@ public class Ui {
      * @param removed the removed task.
      * @param size the new number of tasks in the new list.
      */
-    public void showDeleted(Task removed, int size) {
-        System.out.println(LINE + "\n    Noted. I've removed this task:\n"
-                + "      " + removed.toString()
-                + String.format("\n    Now you have %d %s in the list.", size , size == 1 ? "task" : "tasks")
-                + "\n" + LINE);
+    public String showDeleted(Task removed, int size) {
+        return"Noted. I've removed this task:\n" + "      " + removed.toString()
+                + String.format("\n    Now you have %d %s in the list.", size , size == 1 ? "task" : "tasks");
     }
 
     /**
@@ -191,11 +177,9 @@ public class Ui {
      * @param t the added task.
      * @param size the new number of tasks in the new list.
      */
-    public void showAdded(Task t, int size) {
-        System.out.println(LINE + "\n    Got it. I've added this task:\n"
-                + "      " + t.toString()
-                + String.format("\n    Now you have %d %s in the list.", size , size == 0 ? "task" : "tasks")
-                + "\n" + LINE);
+    public String showAdded(Task t, int size) {
+        return"Got it. I've added this task:\n" + "      " + t.toString()
+                + String.format("    Now you have %d %s in the list.", size , size == 0 ? "task" : "tasks");
     }
 
     /**
@@ -203,7 +187,7 @@ public class Ui {
      *
      * @param msg the error message.
      */
-    public void showError(String msg) {
-        System.out.println(LINE + "\n    " + msg + "\n" + LINE);
+    public String showError(String msg) {
+        return msg;
     }
 }

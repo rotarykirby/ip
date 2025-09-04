@@ -36,89 +36,86 @@ public class Lebron {
      * Shows user a greeting, before waiting for user's commands. Runs a loop that performs tasks based on the user's
      * input. Loop breaks when user types "bye", then shows user a goodbye message before exiting.
      */
-    public void run() {
-        ui.greeting();
-        boolean isExit = false;
+    public String run(String input) {
+        // ui.greeting();
+        String reply = "";
 
-        while (!isExit) {
             try {
-                String command = ui.readCommand();
+                String command = input.trim();
                 if (command == null) {
-                    break;
+                    throw new LebronException("Error - Unknown Error");
                 }
                 Parser.ParsedCommand pc = Parser.parse(command);
 
                 switch (pc.getType()) {
-                case BYE:
-                    isExit = true;
-                    ui.bye();
-                    break;
                 case CHECK:
-                    ui.handleCheck(taskList, pc.getArg1());
+                    reply = ui.handleCheck(taskList, pc.getArg1());
                     break;
                 case LIST: {
-                    ui.handleList(taskList);
+                    reply = ui.handleList(taskList);
                     break;
                 }
                 case FIND: {
-                    ui.handleFind(taskList, pc.getArg1());
+                    reply = ui.handleFind(taskList, pc.getArg1());
                     break;
                 }
                 case MARK: {
                     Task t = taskList.mark(pc.getIndex());
-                    ui.showMarked(t);
+                    reply = ui.showMarked(t);
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case UNMARK: {
                     Task t = taskList.unmark(pc.getIndex());
-                    ui.showUnmarked(t);
+                    reply = ui.showUnmarked(t);
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case DELETE: {
                     Task removed = taskList.delete(pc.getIndex());
-                    ui.showDeleted(removed, taskList.size());
+                    reply = ui.showDeleted(removed, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case TODO: {
                     Task t = new Todo(pc.getArg1());
                     taskList.add(t);
-                    ui.showAdded(t, taskList.size());
+                    reply = ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case DEADLINE: {
                     Task t = new Deadline(pc.getArg1(), pc.getArg1());
                     taskList.add(t);
-                    ui.showAdded(t, taskList.size());
+                    reply = ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 case EVENT: {
                     Task t = new Event(pc.getArg1(), pc.getArg2(), pc.getArg3());
                     taskList.add(t);
-                    ui.showAdded(t, taskList.size());
+                    reply = ui.showAdded(t, taskList.size());
                     storage.saveTasks(taskList.all());
                     break;
                 }
                 default: throw new LebronException("Error - What talking you?");
                 }
             } catch (LebronException e) {
-                ui.showError(e.getMessage());
+                reply = ui.showError(e.getMessage());
             }
 
-        }
+        return reply;
     }
 
-    /**
-     * Program's main.
-     *
-     * @param args args.
-     */
-    public static void main(String[] args) {
-        new Lebron("./data/Lebron.txt").run();
+    public String getResponse(String input) {
+        String reply;
+        if (input.trim() == "bye") {
+            // exit program
+            return "temp";
+        } else {
+            reply = this.run(input);
+        }
+        return reply;
     }
 }
 
