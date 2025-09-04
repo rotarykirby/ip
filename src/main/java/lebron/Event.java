@@ -78,7 +78,7 @@ public class Event extends Task {
                 throw new LebronException("Enter dates in a valid format:\n\n"
                         + "    yyyy-MM-dd HHmm\n"
                         + "    yyyy-MM-dd\n\n"
-                        + "    Note that both Start and End must have the same time format.");
+                        + "Note that both Start and End must have the same time format.");
             }
         }
     }

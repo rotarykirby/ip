@@ -138,24 +138,24 @@ public class Storage {
      */
     private String formatToWrite(Task t) {
         String taskType;
-        boolean isDone = t.getIsDone();
+        String status = t.getIsDone() ? "1" : "0";
 
         if (t instanceof Todo) {
             taskType = "T";
-            return taskType + " | " + isDone + " | " + t.getDescription();
+            return taskType + " | " + status + " | " + t.getDescription();
         } else if (t instanceof Deadline) {
             taskType = "D";
             String by = ((Deadline) t).getOriginalBy();
-            return taskType + " | " + isDone + " | " + t.getDescription() + " | " + by;
+            return taskType + " | " + status + " | " + t.getDescription() + " | " + by;
         } else if (t instanceof Event) {
             taskType = "E";
             String from = ((Event) t).getOriginalFrom();
             String to = ((Event) t).getOriginalTo();
-            return taskType + " | " + isDone + " | " + t.getDescription() + " | " + from + " – " + to;
+            return taskType + " | " + status + " | " + t.getDescription() + " | " + from + " – " + to;
         } else {
             // should be unreachable?
             taskType = "T";
-            return taskType + " | " + isDone + " | " + t.getDescription();
+            return taskType + " | " + status + " | " + t.getDescription();
         }
     }
 }

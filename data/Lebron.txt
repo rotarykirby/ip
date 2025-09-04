@@ -1,2 +1,5 @@
-D | false | asdfas | 1234-12-12
-T | false | sadfklasjf
+T | 0 | sadfklasjf
+T | 1 | sfsa
+T | 0 | sdasfsa
+E | 0 | askifjls | 2131-12-12 â€“ 2133-12-12
+D | 0 | sdfa | 2023-2-21

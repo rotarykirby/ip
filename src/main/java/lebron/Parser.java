@@ -8,7 +8,7 @@ public class Parser {
      * Represents the different types of commands that can be issued by the user.
      * Each command corresponds to a specific action that the application can perform.
      */
-    public enum CommandType { LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
+    public enum CommandType { HI, LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
 
     /**
      * Class that ensures all the commands are formatted properly
@@ -66,6 +66,8 @@ public class Parser {
         String rest = first.length > 1 ? first[1] : "";
 
         switch (head) {
+        case "hi":
+            return new ParsedCommand(CommandType.HI, null, null, null, -1);
         case "bye":
             return new ParsedCommand(CommandType.BYE, null, null, null, -1);
         case "list":
