@@ -102,7 +102,10 @@ public class Lebron {
                 storage.saveTasks(taskList.all());
                 break;
             }
-            default: throw new LebronException("Error - Lebron does not know what you are talking about.");
+            // there should not be a default because the commands have already been filtered through Parser
+            default: {
+                throw new LebronException("Error - Lebron does not know what you are talking about.");
+            }
             }
         } catch (LebronException e) {
             reply = ui.showError(e.getMessage());

@@ -121,7 +121,7 @@ public class Storage {
             String[] fromTo = parts[3].trim().split("–", 2);
             yield new Event(desc, fromTo[0].trim(), fromTo[1].trim());
         }
-        default -> t;
+        default -> throw new LebronException("Unknown task type: " + type);
         };
 
         if (t != null && isDone) {
@@ -136,7 +136,7 @@ public class Storage {
      * @param t the ask.
      * @return the single-line representation to be written into the save file.
      */
-    private String formatToWrite(Task t) {
+    private String formatToWrite(Task t) throws LebronException {
         String taskType;
         String status = t.getIsDone() ? "1" : "0";
 
@@ -153,9 +153,8 @@ public class Storage {
             String to = ((Event) t).getOriginalTo();
             return taskType + " | " + status + " | " + t.getDescription() + " | " + from + " – " + to;
         } else {
-            // should be unreachable?
-            taskType = "T";
-            return taskType + " | " + status + " | " + t.getDescription();
+            // else block should be unreachable because there are only 3 types of tasks
+            throw new LebronException("Unknown task type: " + t.getClass());
         }
     }
 }

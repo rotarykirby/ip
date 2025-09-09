@@ -5,8 +5,8 @@ package lebron;
  * Its subclasses all make of this class's core features.
  */
 public class Task {
-    protected String description;
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     /**
      * Creates an instance of a basic task with a description and a done/not done indicator
@@ -66,6 +66,6 @@ public class Task {
      */
     @Override
     public String toString() {
-        return String.format("[%s] ", this.getStatusIcon()) + this.getDescription();
+        return String.format("[%s] %s", this.getStatusIcon(), this.getDescription());
     }
 }
