@@ -102,7 +102,7 @@ public class Lebron {
                 storage.saveTasks(taskList.all());
                 break;
             }
-            default: throw new LebronException("Error - What talking you?");
+            default: throw new LebronException("Error - Lebron does not know what you are talking about.");
             }
         } catch (LebronException e) {
             reply = ui.showError(e.getMessage());
