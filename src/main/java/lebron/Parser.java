@@ -129,7 +129,7 @@ public class Parser {
             return new ParsedCommand(CommandType.FIND, rest, null, null, -1);
 
         default:
-            throw new LebronException("Error - What talking you?");
+            throw new LebronException("Error - Lebron does not know what you are talking about.");
         }
     }
 
