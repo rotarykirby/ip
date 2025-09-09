@@ -28,8 +28,8 @@ public class Lebron {
             ui.showLoadingError(e.getMessage());
             temp = new TaskList();
         }
-
         this.taskList = temp;
+        assert ui != null && storage != null && taskList != null : "Core components must be initialised by now";
     }
 
     /**
