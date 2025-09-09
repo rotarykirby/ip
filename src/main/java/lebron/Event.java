@@ -61,7 +61,6 @@ public class Event extends Task {
             if (fromDateTime.isAfter(toDateTime)) {
                 throw new LebronException("Event start time cannot be after end time");
             }
-            return;
         } catch (DateTimeParseException e1) {
             // Not a valid date-time format, try to parse as 'yyyy-MM-dd'
             try {
@@ -71,7 +70,6 @@ public class Event extends Task {
                 if (fromDate.isAfter(toDate)) {
                     throw new LebronException("Event start date cannot be after end date");
                 }
-                return;
             } catch (DateTimeParseException e2) {
                 // Not a valid date format
                 System.out.println(from);
@@ -81,6 +79,9 @@ public class Event extends Task {
                         + "Note that both Start and End must have the same time format.");
             }
         }
+
+        assert (fromDate != null) ^ (fromDateTime != null) : "One and only one myst be set";
+        assert (toDate != null) ^ (toDateTime != null) : "One and only one myst be set";
     }
 
     /**

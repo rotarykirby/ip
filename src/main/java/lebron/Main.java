@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  * Class that starts the GUI
  */
 public class Main extends Application {
-    private Lebron lebron = new Lebron("./data/Lebron.txt");
+    private final Lebron lebron = new Lebron("./data/Lebron.txt");
 
     /**
      * Sets up stage and other GUI elements.
