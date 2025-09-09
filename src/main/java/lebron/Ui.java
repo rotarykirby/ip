@@ -167,7 +167,7 @@ public class Ui {
      */
     public String showDeleted(Task removed, int size) {
         return "Noted. I've removed this task:\n" + "      " + removed.toString()
-                + String.format("\nNow you have %d %s in the list.", size , size == 1 ? "task" : "tasks");
+                + String.format("\nNow you have %d %s in the list.", size, size == 1 ? "task" : "tasks");
     }
 
     /**
@@ -179,7 +179,7 @@ public class Ui {
      */
     public String showAdded(Task t, int size) {
         return "Got it. I've added this task:\n" + "      " + t.toString()
-                + String.format("\nNow you have %d %s in the list.", size , size == 0 ? "task" : "tasks");
+                + String.format("\nNow you have %d %s in the list.", size, size == 1 ? "task" : "tasks");
     }
 
     /**
