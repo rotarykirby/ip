@@ -60,6 +60,8 @@ public class Deadline extends Task {
                         + "    yyyy-MM-dd");
             }
         }
+
+        assert (byDate != null) ^ (byDateTime != null) : "One and only one myst be set";
     }
 
     /**

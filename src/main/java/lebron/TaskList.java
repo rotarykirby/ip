@@ -51,7 +51,10 @@ public class TaskList {
      * @param t the task.
      */
     public void add(Task t) {
+        assert t != null : "Task cannot be null";
+        int before = tasks.size();
         tasks.add(t);
+        assert tasks.size() == before + 1: "Tasks must increase by 1";
     }
 
     /**
@@ -66,7 +69,11 @@ public class TaskList {
         if (idx < 0 || idx >= tasks.size()) {
             throw new LebronException("Error - index out of range.");
         }
-        return tasks.remove(idx);
+
+        int before = tasks.size();
+        Task removed = tasks.remove(idx);
+        assert tasks.size() == before - 1: "Tasks must decrease by 1";
+        return removed;
     }
 
     /**
@@ -83,6 +90,7 @@ public class TaskList {
         }
         Task t = tasks.get(idx);
         t.markDone();
+        assert t.isDone : "Task should be done after mark";
         return t;
     }
 
@@ -100,6 +108,7 @@ public class TaskList {
         }
         Task t = tasks.get(idx);
         t.markUndone();
+        assert !t.isDone : "Task should be undone after unmark";
         return t;
     }
 

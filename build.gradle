@@ -49,6 +49,7 @@ test {
 
 application {
     mainClass.set("lebron.Launcher")
+    applicationDefaultJvmArgs = ['-ea']
 }
 
 shadowJar {
