@@ -1,6 +1,8 @@
 package lebron;
 
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Class that combines UI, Storage and TaskList.
@@ -10,6 +12,8 @@ public class Lebron {
     private final Storage storage;
     private final TaskList taskList;
     private final Ui ui;
+    private Stack<Parser.ParsedCommand> history = new Stack<>();
+    private Stack<Task> deletedTasks = new Stack<>();
 
     /**
      * Constructs the program, wiring the UI and storage, load any previously saved tasks from the given file path.
@@ -19,6 +23,7 @@ public class Lebron {
     public Lebron(String filePath) {
         this.ui = new Ui();
         this.storage = new Storage(filePath);
+
         TaskList temp;
 
         try {
@@ -67,18 +72,22 @@ public class Lebron {
                 Task t = taskList.mark(pc.getIndex());
                 reply = ui.showMarked(t);
                 storage.saveTasks(taskList.all());
+                history.add(pc);
                 break;
             }
             case UNMARK: {
                 Task t = taskList.unmark(pc.getIndex());
                 reply = ui.showUnmarked(t);
                 storage.saveTasks(taskList.all());
+                history.add(pc);
                 break;
             }
             case DELETE: {
                 Task removed = taskList.delete(pc.getIndex());
+                this.deletedTasks.add(removed);
                 reply = ui.showDeleted(removed, taskList.size());
                 storage.saveTasks(taskList.all());
+                history.add(pc);
                 break;
             }
             case TODO: {
@@ -86,6 +95,7 @@ public class Lebron {
                 taskList.add(t);
                 reply = ui.showAdded(t, taskList.size());
                 storage.saveTasks(taskList.all());
+                history.add(pc);
                 break;
             }
             case DEADLINE: {
@@ -93,6 +103,7 @@ public class Lebron {
                 taskList.add(t);
                 reply = ui.showAdded(t, taskList.size());
                 storage.saveTasks(taskList.all());
+                history.add(pc);
                 break;
             }
             case EVENT: {
@@ -100,6 +111,47 @@ public class Lebron {
                 taskList.add(t);
                 reply = ui.showAdded(t, taskList.size());
                 storage.saveTasks(taskList.all());
+                history.add(pc);
+                break;
+            }
+            case UNDO: {
+                try {
+                    Parser.ParsedCommand lastCommand = history.pop();
+                    switch (lastCommand.getType()) {
+                    case MARK: {
+                        Task t = taskList.unmark(lastCommand.getIndex());
+                        reply = ui.showUnmarked(t);
+                        storage.saveTasks(taskList.all());
+                        break;
+                    }
+                    case UNMARK: {
+                        Task t = taskList.mark(lastCommand.getIndex());
+                        reply = ui.showMarked(t);
+                        storage.saveTasks(taskList.all());
+                        break;
+                    }
+                    case DELETE: {
+                        Task t = deletedTasks.pop();
+                        taskList.add(t);
+                        reply = ui.showAdded(t, taskList.size());
+                        storage.saveTasks(taskList.all());
+                        break;
+                    }
+                    case EVENT: case DEADLINE: case TODO: {
+                        taskList.size();
+                        Task removed = taskList.delete(taskList.size());
+                        reply = ui.showDeleted(removed, taskList.size());
+                        storage.saveTasks(taskList.all());
+                        break;
+                    }
+                    // should not reach here because of earlier try catch statement
+                    default: {
+                        throw new LebronException("Error - Nothing to undo");
+                    }
+                    }
+                } catch (EmptyStackException e) {
+                    reply = ui.showError("Error - Nothing to undo.");
+                }
                 break;
             }
             // there should not be a default because the commands have already been filtered through Parser
