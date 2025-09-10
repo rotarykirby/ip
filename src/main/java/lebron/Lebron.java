@@ -119,13 +119,13 @@ public class Lebron {
                     Parser.ParsedCommand lastCommand = history.pop();
                     switch (lastCommand.getType()) {
                     case MARK: {
-                        Task t = taskList.unmark(pc.getIndex());
+                        Task t = taskList.unmark(lastCommand.getIndex());
                         reply = ui.showUnmarked(t);
                         storage.saveTasks(taskList.all());
                         break;
                     }
                     case UNMARK: {
-                        Task t = taskList.mark(pc.getIndex());
+                        Task t = taskList.mark(lastCommand.getIndex());
                         reply = ui.showMarked(t);
                         storage.saveTasks(taskList.all());
                         break;
