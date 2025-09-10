@@ -5,8 +5,8 @@ package lebron;
  * Its subclasses all make of this class's core features.
  */
 public class Task {
-    private final String description;
-    private boolean isDone;
+    protected final String description;
+    protected boolean isDone;
 
     /**
      * Creates an instance of a basic task with a description and a done/not done indicator

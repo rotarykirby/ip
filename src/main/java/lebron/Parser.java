@@ -8,7 +8,7 @@ public class Parser {
      * Represents the different types of commands that can be issued by the user.
      * Each command corresponds to a specific action that the application can perform.
      */
-    public enum CommandType { HI, LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND }
+    public enum CommandType { HI, LIST, MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, BYE, CHECK, FIND, UNDO }
 
     /**
      * Class that ensures all the commands are formatted properly
@@ -127,6 +127,9 @@ public class Parser {
                 throw new LebronException("Error - keyword(s) not specified.");
             }
             return new ParsedCommand(CommandType.FIND, rest, null, null, -1);
+        case "undo": {
+            return new ParsedCommand(CommandType.UNDO, null, null, null, -1);
+        }
 
         default:
             throw new LebronException("Error - Lebron does not know what you are talking about.");
