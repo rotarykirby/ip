@@ -45,7 +45,7 @@ Lebron understands the following commands:
   - Adds a Deadline task with a due date.
   - Example: `deadline return book /by 2025-10-01`
 
-- **event \<description> /from \<start> /to <end>**
+- **event \<description> /from \<start> /to \<end>**
   - Adds an Event with a start and end.
   - Example: `event team meeting /from 2025-10-01 10:00 /to 2025-10-01 11:00`
 
