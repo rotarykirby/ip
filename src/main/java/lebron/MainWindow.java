@@ -60,7 +60,7 @@ public class MainWindow extends AnchorPane {
     public void setLebron(Lebron l) {
         lebron = l;
         // Cursor assisted: welcome banner card on startup
-        Label welcome = new Label("Hello! I'm Lebron\nWhat can I do for you?\n\nType 'list' to see commands.");
+        Label welcome = new Label("Hello! I'm Lebron\nWhat can I do for you?");
         welcome.getStyleClass().add("welcome-card");
         HBox container = new HBox(welcome);
         container.setPadding(new Insets(8, 8, 12, 8));
