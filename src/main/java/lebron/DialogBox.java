@@ -8,6 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Priority;
+import javafx.scene.shape.Circle;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -36,6 +39,19 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
+
+        // Cursor assisted: Allow wrapping to take available space and style via CSS classes
+        this.getStyleClass().add("dialog-row");
+        dialog.getStyleClass().add("dialog-text");
+        HBox.setHgrow(dialog, Priority.ALWAYS);
+        HBox.setMargin(dialog, new Insets(6, 0, 6, 0));
+
+        // Cursor assisted: Circular avatar clip bound to current fit size
+        Circle clip = new Circle();
+        clip.radiusProperty().bind(displayPicture.fitWidthProperty().divide(2));
+        clip.centerXProperty().bind(displayPicture.fitWidthProperty().divide(2));
+        clip.centerYProperty().bind(displayPicture.fitHeightProperty().divide(2));
+        displayPicture.setClip(clip);
     }
 
     /**
@@ -49,12 +65,15 @@ public class DialogBox extends HBox {
     }
 
     public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
+        db.getStyleClass().add("user");
+        return db;
     }
 
     public static DialogBox getLebronDialog(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip();
+        db.getStyleClass().add("lebron");
         return db;
     }
 }

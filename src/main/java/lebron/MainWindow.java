@@ -7,6 +7,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 /**
  * Controller for the main GUI.
  */
@@ -31,6 +37,19 @@ public class MainWindow extends AnchorPane {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        // Cursor assisted: Apply stylesheet if available and focus the input on start
+        Scene scene = this.getScene();
+        if (scene != null) {
+            scene.getStylesheets().add(MainWindow.class.getResource("/view/style.css").toExternalForm());
+        } else {
+            this.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    newScene.getStylesheets().add(MainWindow.class.getResource("/view/style.css").toExternalForm());
+                    userInput.requestFocus();
+                }
+            });
+        }
+        userInput.requestFocus();
     }
 
     /**
@@ -40,6 +59,12 @@ public class MainWindow extends AnchorPane {
      */
     public void setLebron(Lebron l) {
         lebron = l;
+        // Cursor assisted: welcome banner card on startup
+        Label welcome = new Label("Hello! I'm Lebron\nWhat can I do for you?\n\nType 'help' to see commands.");
+        welcome.getStyleClass().add("welcome-card");
+        HBox container = new HBox(welcome);
+        container.setPadding(new Insets(8, 8, 12, 8));
+        dialogContainer.getChildren().add(container);
     }
 
     /**
@@ -56,7 +81,11 @@ public class MainWindow extends AnchorPane {
         );
         userInput.clear();
         if (input.equals("bye")) {
-            javafx.application.Platform.exit();
+            userInput.setDisable(true);
+            sendButton.setDisable(true);
+            PauseTransition delay = new PauseTransition(Duration.millis(1200));
+            delay.setOnFinished(e -> javafx.application.Platform.exit());
+            delay.play();
         }
     }
 }
