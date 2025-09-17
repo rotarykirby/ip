@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  * Class that starts the GUI
  */
 public class Main extends Application {
-    private static final String DEFAULT_SAVE_PATH = "./data/Lebron.txt";
+    private static final String DEFAULT_SAVE_PATH = "./LebronData/Lebron.txt";
     private final Lebron lebron = new Lebron(DEFAULT_SAVE_PATH);
 
     /**

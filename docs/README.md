@@ -78,7 +78,7 @@ Note for Java programmers: you may change the folder where task's data is stored
 ```java
 public class Lebron {
     public static void main(String[] args) {
-        new Lebron("./data/Lebron.txt").run();
+        new Lebron("./LebronData/Lebron.txt").run();
     }
 }
 ```
