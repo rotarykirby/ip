@@ -37,35 +37,35 @@ Lebron understands the following commands:
 - **list**
   - Lists all tasks with their indices.
 
-- **todo <description>**
+- **todo \<description>**
   - Adds a Todo task.
   - Example: `todo read book`
 
-- **deadline <description> /by <yyyy-MM-dd>**
+- **deadline \<description> /by \<yyyy-MM-dd>**
   - Adds a Deadline task with a due date.
   - Example: `deadline return book /by 2025-10-01`
 
-- **event <description> /from <start> /to <end>**
+- **event \<description> /from \<start> /to <end>**
   - Adds an Event with a start and end.
   - Example: `event team meeting /from 2025-10-01 10:00 /to 2025-10-01 11:00`
 
-- **mark <index>**
-  - Marks the specified task (1-based index) as done.
+- **mark \<index>**
+  - Marks the specified task as done.
   - Example: `mark 2`
 
-- **unmark <index>**
+- **unmark \<index>**
   - Marks the specified task as not done.
   - Example: `unmark 2`
 
-- **delete <index>**
+- **delete \<index>**
   - Deletes the specified task.
   - Example: `delete 3`
 
-- **find <keyword>**
+- **find \<keyword>**
   - Shows tasks whose descriptions contain the keyword (case-insensitive).
   - Example: `find book`
 
-- **check <yyyy-MM-dd>**
+- **check \<yyyy-MM-dd>**
   - Lists tasks scheduled on a specific date (deadlines due that day and events occurring that day).
   - Example: `check 2025-10-01`
 
