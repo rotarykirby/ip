@@ -1,0 +1,73 @@
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f5f7fb, #e9edf5);
+}
+
+.dialog-container {
+    -fx-padding: 10 10 70 10;
+}
+
+.dialog-row.user .bubble {
+    -fx-background-color: #d7ebff;
+    -fx-text-fill: #0b2e59;
+    -fx-background-radius: 12;
+    -fx-padding: 8 12 8 12;
+}
+
+.dialog-row.lebron .bubble {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+    -fx-background-radius: 12;
+    -fx-padding: 8 12 8 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+/* Circular avatars with subtle ring and shadow */
+.dialog-row .image-view, .dialog-row #displayPicture {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.2, 0, 2);
+    -fx-background-radius: 1000; /* helps with clipping masks in some skins */
+}
+
+.dialog-row.user #displayPicture {
+    -fx-border-color: #a6c9ff;
+    -fx-border-width: 2;
+    -fx-border-radius: 1000;
+}
+
+.dialog-row.lebron #displayPicture {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 1000;
+}
+
+/* Alternating subtle row backgrounds for better separation */
+.dialog-row.user {
+    -fx-background-color: rgba(215, 235, 255, 0.25);
+    -fx-background-radius: 10;
+    -fx-padding: 4 8 4 8;
+}
+
+.dialog-row.lebron {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 10;
+    -fx-padding: 4 8 4 8;
+}
+
+/* Welcome banner card */
+.welcome-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-padding: 12 14 12 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0.2, 0, 3);
+    -fx-text-fill: #1a1a1a;
+}
+
+.text-field {
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+}
+
+.button {
+    -fx-background-radius: 8;
+}
+
