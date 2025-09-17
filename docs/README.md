@@ -15,10 +15,62 @@ All you need to do the get your own Lebron is,
 
 And you can then enjoy your very own Lebron!
 
-Features:
-- [x] Keep track of your to do tasks, deadlines, and events
-- [x] Mark tasks as complete/incomplete
-- [x] Check what deadlines/events occur on a specific date
+## Features
+- [x] Keep track of your to-dos, deadlines, and events
+- [x] Persistent storage of tasks between runs
+- [x] Mark/Unmark tasks as done
+- [x] Delete tasks
+- [x] List all tasks
+- [x] Find tasks by keyword
+- [x] Check tasks occurring on a specific date
+- [x] Undo the last change (where applicable)
+---
+## Commands
+Lebron understands the following commands:
+
+- **hi**
+  - Greets you.
+
+- **bye**
+  - Exits the app (with a short delay so you can read the final reply).
+
+- **list**
+  - Lists all tasks with their indices.
+
+- **todo <description>**
+  - Adds a Todo task.
+  - Example: `todo read book`
+
+- **deadline <description> /by <yyyy-MM-dd>**
+  - Adds a Deadline task with a due date.
+  - Example: `deadline return book /by 2025-10-01`
+
+- **event <description> /from <start> /to <end>**
+  - Adds an Event with a start and end.
+  - Example: `event team meeting /from 2025-10-01 10:00 /to 2025-10-01 11:00`
+
+- **mark <index>**
+  - Marks the specified task (1-based index) as done.
+  - Example: `mark 2`
+
+- **unmark <index>**
+  - Marks the specified task as not done.
+  - Example: `unmark 2`
+
+- **delete <index>**
+  - Deletes the specified task.
+  - Example: `delete 3`
+
+- **find <keyword>**
+  - Shows tasks whose descriptions contain the keyword (case-insensitive).
+  - Example: `find book`
+
+- **check <yyyy-MM-dd>**
+  - Lists tasks scheduled on a specific date (deadlines due that day and events occurring that day).
+  - Example: `check 2025-10-01`
+
+- **undo**
+  - Reverts the last change (e.g., add/delete/mark actions where supported).
 
 
 ---
