@@ -92,66 +92,21 @@ public class Lebron {
             }
             case TODO: {
                 Task t = new Todo(pc.getArg1());
-                taskList.add(t);
-                reply = ui.showAdded(t, taskList.size());
-                storage.saveTasks(taskList.all());
-                history.add(pc);
+                reply = handleTaskCreation(t, pc);
                 break;
             }
             case DEADLINE: {
                 Task t = new Deadline(pc.getArg1(), pc.getArg2());
-                taskList.add(t);
-                reply = ui.showAdded(t, taskList.size());
-                storage.saveTasks(taskList.all());
-                history.add(pc);
+                reply = handleTaskCreation(t, pc);
                 break;
             }
             case EVENT: {
                 Task t = new Event(pc.getArg1(), pc.getArg2(), pc.getArg3());
-                taskList.add(t);
-                reply = ui.showAdded(t, taskList.size());
-                storage.saveTasks(taskList.all());
-                history.add(pc);
+                reply = handleTaskCreation(t, pc);
                 break;
             }
             case UNDO: {
-                try {
-                    Parser.ParsedCommand lastCommand = history.pop();
-                    switch (lastCommand.getType()) {
-                    case MARK: {
-                        Task t = taskList.unmark(lastCommand.getIndex());
-                        reply = ui.showUnmarked(t);
-                        storage.saveTasks(taskList.all());
-                        break;
-                    }
-                    case UNMARK: {
-                        Task t = taskList.mark(lastCommand.getIndex());
-                        reply = ui.showMarked(t);
-                        storage.saveTasks(taskList.all());
-                        break;
-                    }
-                    case DELETE: {
-                        Task t = deletedTasks.pop();
-                        taskList.add(t);
-                        reply = ui.showAdded(t, taskList.size());
-                        storage.saveTasks(taskList.all());
-                        break;
-                    }
-                    case EVENT: case DEADLINE: case TODO: {
-                        taskList.size();
-                        Task removed = taskList.delete(taskList.size());
-                        reply = ui.showDeleted(removed, taskList.size());
-                        storage.saveTasks(taskList.all());
-                        break;
-                    }
-                    // should not reach here because of earlier try catch statement
-                    default: {
-                        throw new LebronException("Error - Nothing to undo");
-                    }
-                    }
-                } catch (EmptyStackException e) {
-                    reply = ui.showError("Error - Nothing to undo.");
-                }
+                reply = handleUndo();
                 break;
             }
             // there should not be a default because the commands have already been filtered through Parser
@@ -164,6 +119,64 @@ public class Lebron {
         }
         return reply;
     }
+
+    /**
+     * Handles task creation operations (TODO, DEADLINE, EVENT).
+     * 
+     * @param task the task to add
+     * @param command the parsed command for history tracking
+     * @return the response message
+     */
+    private String handleTaskCreation(Task task, Parser.ParsedCommand command) throws LebronException {
+        taskList.add(task);
+        String reply = ui.showAdded(task, taskList.size());
+        storage.saveTasks(taskList.all());
+        history.add(command);
+        return reply;
+    }
+    
+    /**
+     * Handles undo operations by reverting the last command.
+     * 
+     * @return the response message
+     */
+    private String handleUndo() {
+        try {
+            Parser.ParsedCommand lastCommand = history.pop();
+            switch (lastCommand.getType()) {
+            case MARK: {
+                Task t = taskList.unmark(lastCommand.getIndex());
+                String reply = ui.showUnmarked(t);
+                storage.saveTasks(taskList.all());
+                return reply;
+            }
+            case UNMARK: {
+                Task t = taskList.mark(lastCommand.getIndex());
+                String reply = ui.showMarked(t);
+                storage.saveTasks(taskList.all());
+                return reply;
+            }
+            case DELETE: {
+                Task t = deletedTasks.pop();
+                taskList.add(t);
+                String reply = ui.showAdded(t, taskList.size());
+                storage.saveTasks(taskList.all());
+                return reply;
+            }
+            case EVENT: case DEADLINE: case TODO: {
+                Task removed = taskList.delete(taskList.size());
+                String reply = ui.showDeleted(removed, taskList.size());
+                storage.saveTasks(taskList.all());
+                return reply;
+            }
+            default: {
+                throw new LebronException("Error - Nothing to undo");
+            }
+            }
+        } catch (EmptyStackException | LebronException e) {
+            return ui.showError("Error - Nothing to undo.");
+        }
+    }    
 
     /**
      * Simply passes the user input into the run command and gets a response

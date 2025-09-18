@@ -137,7 +137,7 @@ public class Parser {
     }
 
     /**
-     * Used by parse method above to determine the index of the task.
+     * Determines the index of the task.
      *
      * @param s the index of task to be marked/unmarked/deleted.
      * @param usage the correct, formatted usage instruction.
